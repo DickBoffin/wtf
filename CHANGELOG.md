@@ -1,6 +1,6 @@
 # Change log
 
-## 0.1.0 – unreleased
+## 0.1.0 – 2026-10-12
 
 The first release: WTF turns web map tiles into print-ready files, from one poster to a country
 across five meters of wall.

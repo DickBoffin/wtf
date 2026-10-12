@@ -6,7 +6,21 @@ poster. You say what the print is about and how big it should be; WTF works out 
 the tiles, and writes PDF, PNG or TIFF files cut into the sheets or strips your printer can feed.
 
 It is a desktop application for Windows, macOS and Linux, in English and Czech. It is in early
-development – there are no releases yet – so expect it to change under you.
+development, so expect it to change under you.
+
+## Download
+
+The installers are on the **[latest release](https://github.com/DickBoffin/wtf/releases/latest)**
+page, with what changed; [all releases](https://github.com/DickBoffin/wtf/releases) lists the
+earlier ones. No Java installation is needed – each installer carries its own runtime.
+
+- **Windows** (64-bit) – the `.msi`. It is not signed yet, so SmartScreen may say *Windows
+  protected your PC*: click **More info**, then **Run anyway**.
+- **macOS** (Apple silicon) – the `.dmg`. It is not signed yet: drag the app to Applications, then
+  run `xattr -dr com.apple.quarantine "/Applications/WTF.app"` once.
+- **Linux** (64-bit, Debian or Ubuntu) – the `.deb`: `sudo apt install ./wtf_*.deb`.
+
+Once a day WTF looks for a newer release and offers its download page; it never updates itself.
 
 ## What it does
 
