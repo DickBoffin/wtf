@@ -6,13 +6,11 @@ bullet is **deleted**; the commit that does it says "Backlog item N", and git ke
 
 ## Before other people test it
 
-- **The installers, installed.** The release workflow's manual run of 12 October 2026 built all
-  three, with the jars the same on every platform; nobody has installed one yet. On each: the
-  `.wtf` association; a `0.0.<run>` build installing over the previous one; the Linux package
-  named `wtf`; whether an installer with `WtfApp` as its main class starts, in which case
-  `Launcher` goes; `THIRD-PARTY.txt` and `licenses/` in the app folder – on macOS in
-  `Contents/app` – and About's two links opening them. Then a tag, for the draft's notes and
-  `check-version.sh` refusing a tag the pom or the change log contradicts.
+- **The installers, installed.** 0.1.0 is released on all three platforms, its jars the same on
+  each; nobody has installed it yet. On each: the `.wtf` association; the next build installing
+  over 0.1.0; the Linux package named `wtf`; whether an installer with `WtfApp` as its main class
+  starts, in which case `Launcher` goes; `THIRD-PARTY.txt` and `licenses/` in the app folder – on
+  macOS in `Contents/app` – and About's two links opening them.
 - **A run through the studio by hand** (`mvn -pl wtf-studio javafx:run`): pan, wheel, keys and a
   double-click after a drag; drawing a rectangle and a polygon; midpoints, right-click,
   Ctrl+right-click and Escape, then undo and redo; switching provider, theme and map language;
