@@ -6,11 +6,13 @@ bullet is **deleted**; the commit that does it says "Backlog item N", and git ke
 
 ## Before other people test it
 
-- **One real run of the release workflow**, manually, once CI is green: three platforms, three
-  installers and the notes on the draft; the `.wtf` association; a `0.0.<run>` build installing
-  over the previous one; the Linux package named `wtf`; `check-version.sh` refusing a tag the pom
-  or the change log contradicts; and whether an installer with `WtfApp` as its main class starts,
-  in which case `Launcher` goes.
+- **The installers, installed.** The release workflow's manual run of 12 October 2026 built all
+  three, with the jars the same on every platform; nobody has installed one yet. On each: the
+  `.wtf` association; a `0.0.<run>` build installing over the previous one; the Linux package
+  named `wtf`; whether an installer with `WtfApp` as its main class starts, in which case
+  `Launcher` goes; `THIRD-PARTY.txt` and `licenses/` in the app folder – on macOS in
+  `Contents/app` – and About's two links opening them. Then a tag, for the draft's notes and
+  `check-version.sh` refusing a tag the pom or the change log contradicts.
 - **A run through the studio by hand** (`mvn -pl wtf-studio javafx:run`): pan, wheel, keys and a
   double-click after a drag; drawing a rectangle and a polygon; midpoints, right-click,
   Ctrl+right-click and Escape, then undo and redo; switching provider, theme and map language;
@@ -164,10 +166,6 @@ Each is *Small* unless it says otherwise.
 
 **Platforms and code**
 
-- **The notices in an installed application are not yet seen**: `THIRD-PARTY.txt` and `licenses/`
-  in the app folder on all three platforms, About's two links opening a text file and a folder
-  from there – on macOS `jpackage --input` lands in `Contents/app` – and nothing of them on the
-  class path. Part of the first real run of the release workflow.
 - **CI's warnings**: `actions/upload-artifact` is pinned to a Node 20 release GitHub is retiring;
   `ubuntu-latest` moves to Ubuntu 26 on 19 October 2026; and `javac` warns of a `requires
   transitive` on an automatic module (`wtf-studio/src/main/java/module-info.java:13`).
