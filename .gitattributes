@@ -15,6 +15,10 @@ wtf-*/src/main/resources/** text eol=lf
 wtf-*/src/main/filtered-resources/** text eol=lf
 /CHANGELOG.md text eol=lf
 
+# What an installation carries beside the jars: the notices and the license texts, with LF
+# whichever platform built it.
+wtf-studio/src/license/** text eol=lf
+
 # Never touched: a changed byte in an icon or an image is a broken file.
 *.png binary
 *.jpg binary

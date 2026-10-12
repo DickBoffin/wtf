@@ -170,6 +170,58 @@
                 </executions>
             </plugin>
 
+            <!-- The notices an installation carries: THIRD-PARTY.txt in target/libs, beside the
+                 jars it names, so jpackage puts it beside them in the application's folder, where
+                 About finds it. One line per library from its pom, with its licenses under the
+                 short names below; src/license/third-party.ftl adds what is not a Maven dependency
+                 and says how to read the file. Not a resource: the jar stays the same bytes on
+                 every platform. A dependency with no license, or with one that has no text in
+                 src/license/licenses and so no name here, fails the build. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>third-party-notices</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <addOutputDirectoryAsResourceDir>false</addOutputDirectoryAsResourceDir>
+                            <fileTemplate>${project.basedir}/src/license/third-party.ftl</fileTemplate>
+                            <!-- What copy-dependencies puts in target/libs, and nothing else -->
+                            <excludedScopes>test,provided,system</excludedScopes>
+                            <!-- No asking repositories for license files of their own -->
+                            <useRepositoryMissingFiles>false</useRepositoryMissingFiles>
+                            <failOnMissing>true</failOnMissing>
+                            <failOnBlacklist>true</failOnBlacklist>
+                            <!-- Each one is a file in src/license/licenses, named so -->
+                            <includedLicenses>
+                                <includedLicense>Apache-2.0</includedLicense>
+                                <includedLicense>EDL-1.0</includedLicense>
+                                <includedLicense>EPL-2.0</includedLicense>
+                                <includedLicense>GPL-2.0-with-classpath-exception</includedLicense>
+                                <includedLicense>GPL-3.0-or-later</includedLicense>
+                                <includedLicense>LGPL-2.1-only</includedLicense>
+                                <includedLicense>MIT</includedLicense>
+                            </includedLicenses>
+                            <!-- The names the poms give, under those. Logback's LGPL names no
+                                 version; its url is the 2.1 text, and its own notice says 2.1. -->
+                            <licenseMerges>
+                                <licenseMerge>Apache-2.0|The Apache Software License, Version 2.0|Apache License, Version 2.0</licenseMerge>
+                                <licenseMerge>EDL-1.0|Eclipse Distribution License - v 1.0</licenseMerge>
+                                <licenseMerge>EPL-2.0|Eclipse Public License - v 2.0|Eclipse Public License, Version 2.0</licenseMerge>
+                                <licenseMerge>GPL-2.0-with-classpath-exception|GPLv2+CE</licenseMerge>
+                                <licenseMerge>LGPL-2.1-only|GNU Lesser General Public License</licenseMerge>
+                                <licenseMerge>MIT|MIT License</licenseMerge>
+                            </licenseMerges>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -203,7 +255,8 @@
                         </configuration>
                     </execution>
                     <!-- The application's own jar goes in beside them, so target/libs is the whole
-                         of it. -->
+                         of it – and the full text of every license THIRD-PARTY.txt names, WTF's
+                         own from the LICENSE at the root. -->
                     <execution>
                         <id>app-jar-into-libs</id>
                         <phase>package</phase>
@@ -214,8 +267,31 @@
                             <target>
                                 <copy file="${project.build.directory}/${project.build.finalName}.jar"
                                       todir="${project.build.directory}/libs"/>
+                                <copy todir="${project.build.directory}/libs/licenses">
+                                    <fileset dir="${project.basedir}/src/license/licenses"/>
+                                </copy>
+                                <copy file="${project.basedir}/../LICENSE"
+                                      tofile="${project.build.directory}/libs/licenses/GPL-3.0-or-later.txt"/>
                             </target>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- The *IT tests, after package: what they check is target/libs. On the class path,
+                 like the tests, since they read files and nothing of the module. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

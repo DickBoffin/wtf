@@ -163,6 +163,22 @@
                         <argLine>-Duser.language=en -Duser.country=US --enable-native-access=ALL-UNNAMED</argLine>
                     </configuration>
                 </plugin>
+                <!-- The checks that need the packaged application, run by `verify` after the jars
+                     are built: wtf-studio's ThirdPartyNoticesIT reads target/libs. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.5.2</version>
+                </plugin>
+                <!-- THIRD-PARTY.txt, the notices an installation carries, from the poms of what
+                     wtf-studio ships: its execution is in that module. It reads the poms Maven has
+                     already resolved and asks no repository for anything more, so a build stays
+                     offline once its dependencies are there. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.7.1</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>

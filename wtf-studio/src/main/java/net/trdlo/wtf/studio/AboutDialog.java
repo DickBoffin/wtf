@@ -17,6 +17,10 @@ import net.trdlo.wtf.studio.outline.OutlineLibrary;
 import net.trdlo.wtf.tiles.Provider;
 import net.trdlo.wtf.tiles.ProviderCatalog;
 
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.CodeSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -270,7 +274,66 @@ public final class AboutDialog {
                 + String.join(System.lineSeparator(), table)
                 + System.lineSeparator() + System.lineSeparator()
                 + I18n.get("about.licenses.dataNote");
-        return Markdown.pane(markdown, AboutDialog::openUrl);
+        final Node pane = Markdown.pane(markdown, AboutDialog::openUrl);
+        final List<Path> files = licenseFiles(applicationFolder());
+        if (!files.isEmpty() && pane instanceof final ScrollPane scroll
+                && scroll.getContent() instanceof final VBox column) {
+            column.getChildren().add(filesEntry(files));
+        }
+        return pane;
+    }
+
+    /**
+     * The notices and the license texts themselves, which the table above only names: links to
+     * the files every installation carries, opened as the system opens a text file and a folder.
+     */
+    private static @NotNull Node filesEntry(final @NotNull List<Path> files) {
+        final Label intro = new Label(I18n.get("about.licenses.files"));
+        intro.setWrapText(true);
+        intro.getStyleClass().add("md-text");
+        final VBox box = new VBox(2, intro);
+        for (final Path file : files) {
+            final Hyperlink link = new Hyperlink(file.toString());
+            link.getStyleClass().add("md-link");
+            link.setPadding(Insets.EMPTY);
+            link.setOnAction(e -> openUrl(file.toUri().toString()));
+            box.getChildren().add(link);
+        }
+        box.setPadding(new Insets(10, 0, 0, 0));
+        return box;
+    }
+
+    /**
+     * Where the application's jars are: beside its own jar in an installation, and the libs
+     * folder the build assembles when it runs from its classes, as Maven and the IDE run it.
+     * Null when the code says nothing of where it came from.
+     */
+    static @Nullable Path applicationFolder() {
+        try {
+            final CodeSource source = AboutDialog.class.getProtectionDomain().getCodeSource();
+            if (source == null || source.getLocation() == null) {
+                return null;
+            }
+            final Path where = Path.of(source.getLocation().toURI());
+            return Files.isDirectory(where) ? where.resolveSibling("libs") : where.getParent();
+        } catch (final URISyntaxException | RuntimeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * {@code THIRD-PARTY.txt} and the {@code licenses} folder the build puts beside the jars
+     * (wtf-studio's pom), or nothing when the folder does not have both.
+     */
+    static @NotNull List<Path> licenseFiles(final @Nullable Path folder) {
+        if (folder == null) {
+            return List.of();
+        }
+        final Path notices = folder.resolve("THIRD-PARTY.txt");
+        final Path texts = folder.resolve("licenses");
+        return Files.isRegularFile(notices) && Files.isDirectory(texts)
+                ? List.of(notices.toAbsolutePath(), texts.toAbsolutePath())
+                : List.of();
     }
 
     private static @NotNull String row(final @NotNull String component, final @NotNull String license) {

@@ -97,5 +97,6 @@ In short: use it, change it and pass it on – with its source, with the names o
 made it, and with a note of what you changed.
 
 The libraries WTF uses keep their own licenses, listed in the application under About →
-Licenses. The country and region outlines come from [Natural Earth](https://www.naturalearthdata.com/),
+Licenses; an installation carries their notices in `THIRD-PARTY.txt` and the text of each license
+in `licenses/`, linked from there. The country and region outlines come from [Natural Earth](https://www.naturalearthdata.com/),
 which is in the public domain.

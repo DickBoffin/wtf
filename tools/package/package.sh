@@ -78,7 +78,7 @@ mvn -B clean package -DskipTests
 
 MAIN_JAR=$(basename "$(ls "$LIBS"/wtf-studio-*.jar | head -1)")
 echo "   main jar: $MAIN_JAR"
-echo "   $(ls "$LIBS" | wc -l) jars on the class path"
+echo "   $(ls "$LIBS"/*.jar | wc -l) jars on the class path"
 
 # ---------------------------------------------------------------------------------------------
 # 2. A runtime image of the JDK's modules and JavaFX's.
@@ -106,7 +106,7 @@ echo "   runtime image: $(du -sh "$RUNTIME" | cut -f1)"
 # And out of the class path input: they are in the image now, and a second copy beside it
 # would be shadowed on a good day and picked on a bad one.
 find "$LIBS" -name 'javafx-*.jar' -delete
-echo "   $(ls "$LIBS" | wc -l) jars on the class path, JavaFX in the runtime"
+echo "   $(ls "$LIBS"/*.jar | wc -l) jars on the class path, JavaFX in the runtime"
 
 # ---------------------------------------------------------------------------------------------
 # 3. The installer.
@@ -121,6 +121,8 @@ COMMON=(
     --vendor "$VENDOR"
     --description "Assembles cached map tiles into print-ready files for very large prints."
     --copyright "DickBoffin – GNU GPL v3 or later"
+    # The jars, and beside them THIRD-PARTY.txt and licenses/, the notices the build writes
+    # there: jpackage takes only the jars onto the class path, and About links the two
     --input "$LIBS"
     --main-jar "$MAIN_JAR"
     --main-class "$MAIN_CLASS"

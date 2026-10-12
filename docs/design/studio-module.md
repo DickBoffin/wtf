@@ -395,7 +395,9 @@ is new after an update. The marks for putting the sheets together (`PrintingPref
 
 **About** (`AboutDialog`): version and authors, *Check for updates now*; **What is new**, the
 bundled `CHANGELOG.md`, opened after an update; **Map data**, each provider's attribution and terms
-from the catalog the export's `<name>-attribution.txt` also reads; **Licenses**.
+from the catalog the export's `<name>-attribution.txt` also reads; **Licenses**, a table of what WTF
+is built on, and links to `THIRD-PARTY.txt` and `licenses/` where an installation has them beside
+its jars ([packaging-and-updates.md](packaging-and-updates.md) §1).
 
 ---
 

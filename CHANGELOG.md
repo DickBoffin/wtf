@@ -39,3 +39,4 @@ across five meters of wall.
   cut, the next start offers it back.
 - **Undo and redo** for everything in the project.
 - **English and Czech**, on Windows, macOS and Linux.
+- The license of everything WTF is built on comes with it in full, linked from About → Licenses.

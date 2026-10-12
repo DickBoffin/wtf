@@ -43,7 +43,7 @@ on the module path. What keeps JavaFX out of the engine is the enforcer rule in 
 | Upgrades | A fixed upgrade UUID, so a new MSI replaces the old one | – | – |
 | Signed | No: SmartScreen warns | No: the quarantine flag has to be cleared | – |
 
-Every installer carries `LICENSE` and registers `.wtf` files (`application/x-wtf-project`, with the
+Every installer carries `LICENSE`, the third-party notices (below) and registers `.wtf` files (`application/x-wtf-project`, with the
 application's icon). `jpackage` takes digits and dots only, so a `-SNAPSHOT` is cut off, and macOS
 refuses a bundle version starting with 0, so its first number is one higher there – `0.1.0` is
 `1.1.0` and `1.0.0` is `2.0.0` – on the installer only.
@@ -77,6 +77,20 @@ a slow window is still believed – one with a dialog open opens the file once t
   `package.sh` also writes the file association `jpackage` reads. Output goes to `target/runtime`
   and `target/installers`.
 - `CHANGELOG.md` is copied from the repository root onto the class path root.
+- **The third-party notices.** `license-maven-plugin` writes `THIRD-PARTY.txt` into
+  `wtf-studio/target/libs` at `prepare-package`: a line per library from its pom, its licenses
+  under short names (`Apache-2.0`, `EPL-2.0`…, `licenseMerges` mapping what the poms call them).
+  The template, `wtf-studio/src/license/third-party.ftl`, adds by hand what is not a Maven
+  dependency – OpenJDK, Font Awesome inside the ikonli pack, Liberation Sans (D29), the Natural
+  Earth outlines – and says the Mapy.com logo is Mapy.com's mark. The full text of each license is
+  in `wtf-studio/src/license/licenses`, copied into `target/libs/licenses` at `package` with the
+  root `LICENSE` as `GPL-3.0-or-later.txt`. A dependency without a license, or with one not in
+  `includedLicenses`, fails the build: a new license is its text in `licenses/`, its name there,
+  and a merge if its pom calls it something else. `ThirdPartyNoticesIT`, run by failsafe in
+  `verify`, checks that every jar in `target/libs` has its line and every license named its text.
+  The file is not a resource, so the jars stay the same bytes; `--input` takes it and `licenses/`
+  into the application's folder, beside the jars – JavaFX's lines stay after its jars go into the
+  runtime – and About → Licenses links both.
 
 ## 2. GitHub Actions
 

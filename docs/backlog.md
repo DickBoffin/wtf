@@ -20,21 +20,6 @@ bullet is **deleted**; the commit that does it says "Backlog item N", and git ke
   while a dialog is open and while a file chooser is, opened once it closes – the headless platform
   shows no chooser.
 
-## Scheduled
-
-Decided on 12 October 2026, walking the list above for the alpha.
-
-127. *To be done by an Opus 5.5 agent at medium effort.*
-    **The installers carry the third-party license texts.** AtlantaFX (MIT), JTS (EDL/EPL),
-    Logback (EPL/LGPL), JavaFX (GPLv2 with the Classpath Exception, jlinked into the runtime),
-    Jackson, PDFBox, ikonli and Font Awesome (CC BY/OFL), and the rest of what ships, want their
-    notices with a binary; About names them only. `license-maven-plugin` writes
-    `THIRD-PARTY.txt` from the poms at build time, the full text of each license used goes
-    beside it in `licenses/`, both are copied into the app image, and About links to them. The
-    build fails on a dependency whose license is unknown. *Test: the build's `THIRD-PARTY.txt`
-    names every jar in `wtf-studio/target/libs`, each with a license that has its text in
-    `licenses/`.*
-
 ## Open
 
 Each is *Small* unless it says otherwise.
@@ -83,6 +68,10 @@ Each is *Small* unless it says otherwise.
 
 **Wrong or missing words**
 
+- **About's license table says Logback is EPL 1.0 or LGPL 2.1**; Logback 1.5 is EPL 2.0 or LGPL
+  2.1, as its pom and `THIRD-PARTY.txt` say. The table is a second list kept by hand
+  (`AboutDialog.licenses`) beside the one the build writes from the poms: read it from
+  `THIRD-PARTY.txt`, or check the two agree.
 - **project-file.md says `regions.outside` is ignored without a subject**; `WtfFile.toRegions`
   (`:561`) passes it on and `ComposeJob` (`:100-103`) throws a plain `IllegalArgumentException`,
   which no bundle says. Ignore it, as the document says.
@@ -175,6 +164,10 @@ Each is *Small* unless it says otherwise.
 
 **Platforms and code**
 
+- **The notices in an installed application are not yet seen**: `THIRD-PARTY.txt` and `licenses/`
+  in the app folder on all three platforms, About's two links opening a text file and a folder
+  from there – on macOS `jpackage --input` lands in `Contents/app` – and nothing of them on the
+  class path. Part of the first real run of the release workflow.
 - **CI's warnings**: `actions/upload-artifact` is pinned to a Node 20 release GitHub is retiring;
   `ubuntu-latest` moves to Ubuntu 26 on 19 October 2026; and `javac` warns of a `requires
   transitive` on an automatic module (`wtf-studio/src/main/java/module-info.java:13`).
