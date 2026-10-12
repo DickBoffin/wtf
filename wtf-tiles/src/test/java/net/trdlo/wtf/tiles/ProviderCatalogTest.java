@@ -87,7 +87,7 @@ class ProviderCatalogTest {
         assertFalse(CATALOG.require("osm").bulkDownload(), "OSM's usage policy rules this out");
         assertFalse(CATALOG.require("opentopomap").bulkDownload());
         assertFalse(CATALOG.require("esri").bulkDownload(), "held back until the terms are read");
-        assertTrue(CATALOG.require("mapy-com").bulkDownload());
+        assertFalse(CATALOG.require("mapy-com").bulkDownload(), "its terms forbid storing tiles");
     }
 
     @Test

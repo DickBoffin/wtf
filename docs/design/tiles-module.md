@@ -64,7 +64,7 @@ first `json` one under this heading):
   "logo": "mapy-com.svg",
   "signupUrl": "https://developer.mapy.com/",
   "signupHint": "Create a developer account at developer.mapy.com and generate an API key.",
-  "termsUrl": "https://developer.mapy.com/terms/",
+  "termsUrl": "https://developer.mapy.com/terms-and-conditions/",
   "bulkDownload": true,
   "quotaNote": "Free tier: a monthly request allowance."
 }

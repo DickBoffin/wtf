@@ -9,7 +9,7 @@ missing from the table was withdrawn. A new question goes at the end with a reco
 | D2 | Export formats | PDF (default), TIFF per sheet, PNG per sheet. |
 | D3 | Cache migration | None. One layout, `<provider>/<theme>/<z>/<x>_<y>`; moving a cache is done by hand. |
 | D4 | Step UI | A toolbar and a vertical step rail; no menu bar, no modal wizard; every step always reachable. |
-| D5 | May tiles be printed? | Yes, for Mapy.com: its terms restrict the request budget, not the use. Attribution is required. |
+| D5 | May tiles be printed? | As each provider's terms say (providers.md §1). Mapy.com's, in force since 1 June 2025, are for applications in electronic form and forbid storing tiles, so it is viewing only, like every provider whose terms forbid downloading a print; its credit carries its logo. |
 | D6 | `@2x` tiles | The same ground at 512 px, names drawn twice as sharp: the DPI of the zoom above with the labels of this one. `{scale}` in a template is where `@2x` goes and says the theme has it; the downloader proves every tile by its pixels. Chosen as a ×2 row of the Detail table, not a setting; the map browses at the usual scale, the 1:1 preview and the print use the project's. |
 | D7 | What "15 mm overlap" means | The shared band: strip B repeats strip A's last 15 mm. No *usable width*; a larger overlap covers the printer's white edge at a seam (D41 for the outer edge). |
 | D8 | Full bleed | The page is the whole sheet; nothing is inset. |

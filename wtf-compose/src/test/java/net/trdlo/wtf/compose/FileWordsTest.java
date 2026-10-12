@@ -95,7 +95,7 @@ class FileWordsTest {
         assertEquals(lines("""
                 © Seznam.cz a.s., © OpenStreetMap contributors
                 Theme: outdoor
-                Terms: https://developer.mapy.com/terms/
+                Terms: https://developer.mapy.com/terms-and-conditions/
                 Produced by WTF.
                 """), proof.get(1));
 
@@ -255,7 +255,7 @@ class FileWordsTest {
         assertEquals(lines("""
                 © Seznam.cz a.s., © OpenStreetMap contributors
                 map outdoor
-                terms at https://developer.mapy.com/terms/
+                terms at https://developer.mapy.com/terms-and-conditions/
                 made
                 """), files.get(1), "the provider's credit as the provider gives it, the rest in the job's words");
     }

@@ -6,11 +6,6 @@ bullet is **deleted**; the commit that does it says "Backlog item N", and git ke
 
 ## Before other people test it
 
-- **The first CI run.** Nothing has run on GitHub yet: pinned actions, the enforcer rule and
-  SpotBugs in `verify`, `tools/package/runtime-modules.sh --check` on Linux, the engine job's
-  `ComposeCli sample` and `layout`, and the toolkit tests on `ubuntu-latest` (JavaFX headless needs
-  freetype, fontconfig, pango and glib from the system, and a font). In the log: whether
-  `GoldenPdfTest` compared bytes or skipped, which Linux's zlib decides. *A push and a look.*
 - **One real run of the release workflow**, manually, once CI is green: three platforms, three
   installers and the notes on the draft; the `.wtf` association; a `0.0.<run>` build installing
   over the previous one; the Linux package named `wtf`; `check-version.sh` refusing a tag the pom
@@ -46,19 +41,11 @@ Each is *Small* unless it says otherwise.
 
 **Losing work or a print**
 
-- **WTF keeps tiles longer than three providers allow.** Mapbox caps a device cache at 30 days,
-  Stadia at the HTTP headers' lifetime (7 days without), MapTiler at a "temporary personal cache";
-  WTF's cache keeps every tile it browses for good. A per-provider cache lifetime, or the
-  provider dropped, if WTF gets users. *Medium.*
-- **Mapy.com's terms, as read on 2026-10-12, contradict D5.** Its *Terms of Use of the REST API
-  Mapy.com Service*, in force since 1 June 2025, say "The Service is intended only for Derived
-  Applications in electronic form" (1.2) and forbid "storing or caching individual tiles or API
-  function results" and retrieving data "including indexing, sharing, pre-caching, storing, or
-  exporting" (4.6.2); the developer site's *Printed products* page says "The Mapy.com API is not
-  intended for preparing press materials" and sends a print to screenshots of Mapy.cz. D5,
-  Mapy.com's `bulkDownload` and providers.md §1 ("no restriction on use") rest on a reading these
-  contradict. Read them whole, the Czech text too, and decide: viewing only, or a word with
-  Seznam.cz.
+- **WTF keeps tiles longer than four providers allow.** Mapy.com forbids storing or caching tiles
+  at all, Mapbox caps a device cache at 30 days, Stadia at the HTTP headers' lifetime (7 days
+  without), MapTiler at a "temporary personal cache"; WTF's cache keeps every tile it browses for
+  good, and can print what it browsed. A per-provider cache lifetime, or the provider dropped, if
+  WTF gets users. *Medium.*
 - **A tile that vanishes during an export prints as background under `REFUSE`**
   (`PdfExporter:718-731`, `RasterExporter:590-599`): `tiles.get` returning null for a tile not
   known to be empty leaves a silent hole. Ask the policy again.
@@ -188,6 +175,9 @@ Each is *Small* unless it says otherwise.
 
 **Platforms and code**
 
+- **CI's warnings**: `actions/upload-artifact` is pinned to a Node 20 release GitHub is retiring;
+  `ubuntu-latest` moves to Ubuntu 26 on 19 October 2026; and `javac` warns of a `requires
+  transitive` on an automatic module (`wtf-studio/src/main/java/module-info.java:13`).
 - **A huge `Retry-After` defeats the rate limit** (`ProviderLimits:229`): `toNanos()` overflows
   past 292 years, the throw is an ordinary failure, and the next tile is asked at once. Anything
   beyond `maxWait` is outlasted before it is converted.
@@ -256,4 +246,3 @@ Ideas, not commitments.
 - Captures without a display (Monocle); more run configurations and a `qodana.yaml`.
 - The metric buffer tested at the equator and at 70°.
 - Safe mode: Shift during the splash starts without the last project or view.
-- A fifth example: Czechia on Mapy.com, which needs a free key, leading to *Providers and keys*.

@@ -49,8 +49,8 @@
       "logo": "mapy-com.svg",
       "signupUrl": "https://developer.mapy.com/",
       "signupHint": "Create a developer account at developer.mapy.com and generate an API key in the dashboard. The free tier has a monthly request allowance and requests beyond it are billed, so check what is left before a large download. Attribution, including the Mapy.com logo, is required.",
-      "termsUrl": "https://developer.mapy.com/terms/",
-      "bulkDownload": true,
+      "termsUrl": "https://developer.mapy.com/terms-and-conditions/",
+      "bulkDownload": false,
       "quotaNote": "Free tier: a monthly request allowance. The terms place no restriction on what the data is used for."
     },
     {

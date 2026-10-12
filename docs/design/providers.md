@@ -18,7 +18,7 @@ often its national agency's (§5), so the national services that answer without 
 
 | Provider (id) | Why it ships | Imagery | Key | Bulk | Terms, as far as read |
 | --- | --- | --- | --- | --- | --- |
-| **Mapy.com** (`mapy-com`) | The primary: its tourist map and aerial coverage of Czechia to z20. | `aerial` | Yes | Allowed | Read: no restriction on use; attribution with the logo required; requests past the free allowance billed. |
+| **Mapy.com** (`mapy-com`) | The primary: its tourist map and aerial coverage of Czechia to z20. | `aerial` | Yes | **Viewing only** | Read 2026-10-12: for applications in electronic form only (1.2); storing or caching tiles and pre-caching forbidden (4.6.2); not for press materials. Attribution with the logo required. |
 | **MapTiler** (`maptiler`) | Good-looking raster styles, worldwide satellite, a generous free tier. | `satellite` | Yes | **Viewing only** | Read 2026-10-12: bulk tile download and export outside the service forbidden; only a temporary personal cache; prints internal, A4 at 300 DPI, on paid plans. Free plan non-commercial, 100,000 requests a month. |
 | **Thunderforest** (`thunderforest`) | *Outdoors* and *Landscape*, among the best rendered maps at large sizes. | No | Yes | **Viewing only** | Read 2026-10-12: bulk downloading and pre-caching forbidden below the Small Business plan; on-device caching allowed; tiles CC BY-SA 4.0, printed with a text credit. Free: 150,000 tiles a month. |
 | **Mapbox** (`mapbox`) | Worldwide satellite at high zoom. | `mapbox.satellite` | Yes | **Viewing only** | Read 2026-10-12: no systematic download; a device cache of 30 days at most; print or PDF only under bought print rights, Streets only – never satellite. Free: 750,000 raster tiles a month. |
