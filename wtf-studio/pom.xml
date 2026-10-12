@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.trdlo.wtf</groupId>
         <artifactId>wtf</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>wtf-studio</artifactId>
@@ -251,6 +251,22 @@
                                     <arg value="rev-parse"/>
                                     <arg value="HEAD"/>
                                 </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <!-- target/libs is the application and nothing else, so each build starts it
+                         empty: a jar of the version before a versions:set would otherwise ship
+                         beside the new one, and fail the notices' check. Before prepare-package,
+                         where THIRD-PARTY.txt is written into it. -->
+                    <execution>
+                        <id>fresh-libs</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${project.build.directory}/libs" quiet="true"/>
                             </target>
                         </configuration>
                     </execution>

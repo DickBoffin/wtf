@@ -1,5 +1,10 @@
 # Change log
 
+## 0.2.0 – unreleased
+
+- **The macOS disk image is named after the version WTF shows**, not the bundle number macOS
+  requires inside it.
+
 ## 0.1.0 – 2026-10-12
 
 The first release: WTF turns web map tiles into print-ready files, from one poster to a country

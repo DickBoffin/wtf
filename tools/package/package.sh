@@ -61,6 +61,7 @@ esac
 # always: 0.1.0 is stamped 1.1.0 and 1.0.0 is 2.0.0, which keeps every later version above every
 # earlier one. It is installer metadata only – the version the application shows is its own, from
 # app.properties.
+FILE_VERSION="$APP_VERSION"
 if [ "$OS" = mac ]; then
     APP_VERSION="$(( ${APP_VERSION%%.*} + 1 )).${APP_VERSION#*.}"
 fi
@@ -201,6 +202,12 @@ case "$OS" in
             --file-associations "$(associate "$RES/icon-256.png")"
         ;;
 esac
+
+# jpackage names the disk image after the bundle version; a tester reads the file name, so it
+# carries the version About shows
+if [ "$OS" = mac ] && [ "$APP_VERSION" != "$FILE_VERSION" ]; then
+    mv "$OUT/$APP_NAME-$APP_VERSION.dmg" "$OUT/$APP_NAME-$FILE_VERSION.dmg"
+fi
 
 echo
 echo "== Written to $OUT"

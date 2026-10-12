@@ -46,7 +46,8 @@ on the module path. What keeps JavaFX out of the engine is the enforcer rule in 
 Every installer carries `LICENSE`, the third-party notices (below) and registers `.wtf` files (`application/x-wtf-project`, with the
 application's icon). `jpackage` takes digits and dots only, so a `-SNAPSHOT` is cut off, and macOS
 refuses a bundle version starting with 0, so its first number is one higher there – `0.1.0` is
-`1.1.0` and `1.0.0` is `2.0.0` – on the installer only.
+`1.1.0` and `1.0.0` is `2.0.0` – inside the bundle only; the `.dmg` keeps the version About
+shows in its name.
 
 Windows and Linux pass an opened `.wtf` as an argument; macOS sends an Apple event, which WTF does
 not yet listen for. A project opened while WTF runs goes to that window (`SingleInstance`: a lock,
