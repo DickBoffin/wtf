@@ -53,7 +53,7 @@ class MapLanguageTest {
         final Provider german = new Provider(MAPY.id(), MAPY.displayName(), MAPY.urlTemplate(), MAPY.auth(),
                 MAPY.minZoom(), MAPY.maxZoom(), MAPY.expectedFormat(), MAPY.themes(), MAPY.subdomains(),
                 MAPY.attribution(), MAPY.signupUrl(), MAPY.signupHint(), MAPY.termsUrl(), MAPY.bulkDownload(),
-                MAPY.quotaNote(), MAPY.coverage(), List.of("de", "en"));
+                MAPY.quotaNote(), MAPY.coverage(), List.of("de", "en"), MAPY.logo());
         assertEquals("de", german.defaultLanguage(), "the first it lists, which its definition decides");
         assertEquals("en", OSM.defaultLanguage(), "one that lists none");
     }

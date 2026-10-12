@@ -32,7 +32,7 @@ class RetinaPrintTest {
     /** A map whose address says where @2x goes. */
     private static final Provider RETINA = new Provider("retina", "Retina", "http://127.0.0.1:1/{z}/{x}/{y}{scale}.png",
             null, 0, 19, null, List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-            null, "test", null, null, null, true, null, null, null);
+            null, "test", null, null, null, true, null, null, null, null);
 
     @Test
     @DisplayName("a raster from @2x tiles is the same sheet in twice the pixels each way")

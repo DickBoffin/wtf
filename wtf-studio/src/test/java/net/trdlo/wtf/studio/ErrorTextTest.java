@@ -73,7 +73,7 @@ class ErrorTextTest {
     void nothingThere() {
         final Provider p = new Provider("kartverket", "Kartverket", "https://x/{z}/{x}/{y}.png",
                 null, 0, 19, null, List.of(new Provider.Theme("topo", "Topo", null, null, null, null, false, null)),
-                null, "none", null, null, null, true, null, null, null);
+                null, "none", null, null, null, true, null, null, null, null);
         final var e = ErrorText.explain(new NothingThereException(p, 12));
         assertEquals(I18n.get("download.nothing.title"), e.headline());
         assertTrue(e.body().contains("Kartverket") && e.body().contains("12"), e.body());

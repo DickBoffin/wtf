@@ -46,7 +46,9 @@ public enum ProviderReason implements Refusal.Reason {
     ZOOMS_INVERTED("Provider {0}, map {1}: the top zoom is below the lowest"),
     /** {0} the code as written */
     LANGUAGE_UNFIT("''{0}'' will not do as a language. It becomes a folder name in the tile cache, so: "
-            + "a code such as cs or pt-BR, letters, digits and dashes.");
+            + "a code such as cs or pt-BR, letters, digits and dashes."),
+    /** {0} the provider's id, {1} the logo's name as written */
+    LOGO_UNKNOWN("Provider {0}: WTF has no logo called ''{1}'' to print beside the credit");
 
     private final String english;
 

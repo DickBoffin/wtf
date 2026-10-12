@@ -204,7 +204,7 @@ class TileDownloaderTest {
                                      final Provider.@Nullable Auth auth, final boolean bulk) {
         return new Provider(id, name, template, auth, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, bulk, null, null, null);
+                null, "test", null, null, null, bulk, null, null, null, null);
     }
 
     private static TileKey key(final int x, final int y) {

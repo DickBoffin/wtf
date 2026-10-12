@@ -15,7 +15,7 @@ missing from the table was withdrawn. A new question goes at the end with a reco
 | D8 | Full bleed | The page is the whole sheet; nothing is inset. |
 | D9 | "A00" | 2A0, the 2 m² sheet. The presets keep 4A0 and 2A0. |
 | D12 | Mapy.com aerial | JPEG, measured. Responses carry an `ETag` and a `Last-Modified` that is the imagery's age. |
-| D14 | Marks | Only where the neighboring sheet covers them (compose-module §4), plus two visible ones, each per project: the credit in the print's bottom-right corner, on by default, and the map scale in its bottom-left, off by default. No cut marks: the printer's edge is the cut guide. |
+| D14 | Marks | Only where the neighboring sheet covers them (compose-module §4), plus two visible ones, each per project: the credit in the print's bottom-right corner, with the provider's logo where its terms ask for one, on by default, and the map scale in its bottom-left, off by default. No cut marks: the printer's edge is the cut guide. |
 | D15 | Localization | Every user-visible string through the bundle; see below. |
 | D16 | Two regions | A subject splits the print into inside and outside, each with its own treatment at the print's one zoom, divided by an exact vector edge. The seam is the subject of the print, not an artifact; a PDF clip is exact and free, and an effect on an indexed PNG is a palette change. The fade, not a coarser zoom, makes the surround read as background. |
 | D17 | Where the cache lives | The platform's per-user cache directory, one configurable override, no fallback chain. |

@@ -111,6 +111,7 @@ public final class EngineText {
             case SUBDOMAIN_BLANK -> "engine.provider.subdomainBlank";
             case ZOOMS_INVERTED -> "engine.provider.zoomsInverted";
             case LANGUAGE_UNFIT -> "engine.provider.languageUnfit";
+            case LOGO_UNKNOWN -> "engine.provider.logoUnknown";
         };
     }
 

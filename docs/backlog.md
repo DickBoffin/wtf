@@ -29,16 +29,6 @@ bullet is **deleted**; the commit that does it says "Backlog item N", and git ke
 
 Decided on 12 October 2026, walking the list above for the alpha.
 
-126. *To be done by an Opus 5.5 agent at maximum effort.*
-    **A Mapy.com print carries Mapy.com's logo beside its credit.** Mapy.com's terms ask for the
-    logo with the attribution (providers.md §1), and the credit in the print's corner (D14) is
-    words only. The logo Mapy.com publishes for attribution, bundled with the provider's
-    definition rather than in the code, drawn beside the credit's words at the credit's height:
-    in a PDF as vector paths or as an image copied as it is, never re-encoded per sheet, and in a
-    PNG or TIFF drawn into the raster. Only for a provider that names a logo; every other credit
-    stays as it is, so `golden.pdf` and `decoded.pdf` do not change. The same bytes every time, on
-    every machine. *Test: a Mapy.com export's credit has the logo, at the credit's height, on every
-    sheet that carries the credit; another provider's export is unchanged.*
 127. *To be done by an Opus 5.5 agent at medium effort.*
     **The installers carry the third-party license texts.** AtlantaFX (MIT), JTS (EDL/EPL),
     Logback (EPL/LGPL), JavaFX (GPLv2 with the Classpath Exception, jlinked into the runtime),
@@ -60,6 +50,15 @@ Each is *Small* unless it says otherwise.
   Stadia at the HTTP headers' lifetime (7 days without), MapTiler at a "temporary personal cache";
   WTF's cache keeps every tile it browses for good. A per-provider cache lifetime, or the
   provider dropped, if WTF gets users. *Medium.*
+- **Mapy.com's terms, as read on 2026-10-12, contradict D5.** Its *Terms of Use of the REST API
+  Mapy.com Service*, in force since 1 June 2025, say "The Service is intended only for Derived
+  Applications in electronic form" (1.2) and forbid "storing or caching individual tiles or API
+  function results" and retrieving data "including indexing, sharing, pre-caching, storing, or
+  exporting" (4.6.2); the developer site's *Printed products* page says "The Mapy.com API is not
+  intended for preparing press materials" and sends a print to screenshots of Mapy.cz. D5,
+  Mapy.com's `bulkDownload` and providers.md §1 ("no restriction on use") rest on a reading these
+  contradict. Read them whole, the Czech text too, and decide: viewing only, or a word with
+  Seznam.cz.
 - **A tile that vanishes during an export prints as background under `REFUSE`**
   (`PdfExporter:718-731`, `RasterExporter:590-599`): `tiles.get` returning null for a tile not
   known to be empty leaves a silent hole. Ask the policy again.
@@ -139,6 +138,17 @@ Each is *Small* unless it says otherwise.
 - **The command line's layout file says "one region" and no more** when both sides of the subject
   are drawn alike, faded or not: `Regions.describe` names a treatment only where the two differ.
 - **basemap.de's credit** should read "© GeoBasis-DE / BKG (<year checked>) CC BY 4.0".
+- **Mapy.com's credit is not the notice its attribution page asks for.** The page wants "Seznam.cz
+  a.s. and others" linked to https://api.mapy.com/copyright, and the logo "clickable and link to
+  https://mapy.com/"; WTF prints "© Seznam.cz a.s., © OpenStreetMap contributors", and its PDF
+  links neither, though a PDF is read on screens too. The page says the current text is in
+  Mapy.com's TileJSON, which needs a key to read. The words, and a `/Link` annotation over each –
+  the same bytes every time.
+- **The scale and the credit can overlap on one sheet just wider than 120 mm.** `SeamMarks` puts
+  the scale a line above the credit only on a narrower sheet, whatever the two need: a 40 mm bar
+  and a ratio naming its latitude take 70 mm from the left inset, Mapy.com's credit with its logo
+  67 mm from the right one, and an upright A5 sheet has 132 mm between them – Stadia's credit is
+  90 mm alone. Ask their widths, not the sheet's.
 - **The export's folder field shows the start of the path** and is cut where the field ends, so
   the folder's own name, at the end, is the part not seen. Show the end, the whole path as a tooltip.
 - **The Paper step says the spare paper shows more map where it stays white.** `MediumPanel.spare`

@@ -26,7 +26,8 @@ import java.time.format.DateTimeParseException;
  * @param label        which sheet this is and where it goes, in the hidden strip
  * @param arrows       which neighbor goes over each seam, in the hidden strip
  * @param registration a hairline where the covering sheet's trimmed edge lands
- * @param credit       the provider's credit on the finished print, bottom right
+ * @param credit       the provider's credit on the finished print, bottom right, with its logo where
+ *                     its definition names one
  * @param scale        the map scale on the finished print, bottom left; null for none
  * @param name         what the label calls the print; may be blank. The studio gives the name the
  *                     print's files are written under; a job made from a project file has the

@@ -89,7 +89,7 @@ What is particular to each provider; everything else is in its `providers.json` 
 
 | Provider | |
 | --- | --- |
-| **Mapy.com** – verified | Key in the header `X-Mapy-Api-Key`. **`cs` and `en` are offered** of the fourteen languages the server takes: by its OpenAPI description the language changes only tiles at zoom 6 and below, and there the fourteen come back as two tiles, `cs` (shared by `sk`) and `en` (the rest), so more would only cache the same tiles under other names; `cs`, the server's default, is first (D40). Rendered themes PNG to z19; **`aerial` JPEG**, z20 over Czechia, z18–19 over AT/PL/SI/SK/FR/CH, **z13 elsewhere** – one ceiling per theme, so outside Czechia the deeper zooms are offered and empty. **`256@2x` for `basic` and `outdoor`**, probed: 512 px of the same ground; the other three answer it with 404 and have templates without `{scale}`. |
+| **Mapy.com** – verified | Key in the header `X-Mapy-Api-Key`. **`cs` and `en` are offered** of the fourteen languages the server takes: by its OpenAPI description the language changes only tiles at zoom 6 and below, and there the fourteen come back as two tiles, `cs` (shared by `sk`) and `en` (the rest), so more would only cache the same tiles under other names; `cs`, the server's default, is first (D40). Rendered themes PNG to z19; **`aerial` JPEG**, z20 over Czechia, z18–19 over AT/PL/SI/SK/FR/CH, **z13 elsewhere** – one ceiling per theme, so outside Czechia the deeper zooms are offered and empty. **`256@2x` for `basic` and `outdoor`**, probed: 512 px of the same ground; the other three answer it with 404 and have templates without `{scale}`. Its credit is printed with its logo, below. |
 | **MapTiler** – partly verified | Rendered styles under `/maps/{id}/256/` as PNG – without `256` the server sends 512 px tiles drawn a zoom deeper, whose names are half the size the Detail step says; `@2x` from its documentation, satellite without. Satellite under `/tiles/satellite/` as JPEG: a theme overrides the provider's `urlTemplate`. Style ids unverified, as its `quotaNote` says. Free: 100 000 requests a month. |
 | **Thunderforest** – template verified | Query `apikey`. `@2x` for every style, from its documentation. Six styles ship; the list and `maxZoom` 22 are unverified. |
 | **Mapbox** – verified | The v4 raster endpoint, `mapbox.satellite` only (rendered styles are another API). `@2x` from its documentation, which for imagery is about the photo of a zoom deeper. **Always JPEG**, whatever the extension asks. Documented to z30; the imagery stops lower, and the definition says 22. |
@@ -104,6 +104,20 @@ What is particular to each provider; everything else is in its `providers.json` 
 | **Kartverket** | `{z}/{y}/{x}`; RGBA PNG with real transparency, most likely sea and beyond its coverage, which is why a print has a background color. |
 | **USGS** | ArcGIS REST, `{z}/{y}/{x}`, JPEG even for the topographic map; `maxZoom` 16. |
 | **GSI** | Plain XYZ; `std` PNG, `seamlessphoto` JPEG. |
+
+**Mapy.com's logo.** Its attribution page,
+https://developer.mapy.com/rest-api-mapy-cz/atribution/, asks for the logo with the copyright
+notice, so the credit is printed with it (`"logo": "mapy-com.svg"`,
+[compose-module.md](compose-module.md) §4). `logos/mapy-com.svg` beside `providers.json` is the
+page's `logo.svg`, byte for byte as fetched from https://api.mapy.com/img/api/logo.svg on
+2026-10-12: 71 683 bytes, SHA-256
+`a26cbd8715150e221047dae26c6f16d65c215325915d306a99fc6c9ee76d1b69`. It is black letters at 80
+percent in a white halo, printed opaque as the gray they are over white. The page offers it or
+`logo_green.svg`, white letters on a green pill; the dark one has the halo the credit's words have.
+Its rules are written for a screen – "a visible location above the map", at least 30 px tall there
+and 10 px outside it, as large as any other logo above the map, and "clickable and link to
+https://mapy.com/" – and paper has neither pixels nor links: WTF sets the logo after the credit's
+words, as tall as they are set.
 
 ## 4. National and regional providers – probed
 
@@ -160,7 +174,9 @@ Each line is a way a definition can be wrong while looking right.
 5. **Find the `@2x` variant**, if any, and put `{scale}` where it goes: the Test must say 512 × 512
    for it, and a theme it 404s for gets a template without the token
    ([tiles-module.md](tiles-module.md) §1).
-6. **Copy the attribution** from the provider's documentation or TileJSON, not from memory.
+6. **Copy the attribution** from the provider's documentation or TileJSON, not from memory. Where
+   the terms ask for a logo with it, bundle the provider's own file in `logos/` as published, name
+   it in `logo`, and say in §3 where it came from and when.
 7. **Read the terms and set `bulkDownload` by the rule in §1**; say in the §1 table whether they were
    read, and what they say about printing if anything.
 8. **Write the `signupHint` after signing up**, so it describes the page that exists.

@@ -22,6 +22,10 @@ import java.util.regex.Pattern;
  *                  Only a theme whose address has {@code {lang}} has a language at all. The first
  *                  is the provider's own, which a map is in where nothing names one
  *                  ({@link #defaultLanguage}).
+ * @param logo      the logo its credit is printed with, for a provider whose terms ask for one with
+ *                  the attribution, as Mapy.com's do: the name of an SVG file WTF bundles beside the
+ *                  shipped definitions ({@link ProviderCatalog#logo}). Null for a credit in words
+ *                  only, which is every other provider's.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Provider(
@@ -41,7 +45,8 @@ public record Provider(
         boolean bulkDownload,
         @Nullable String quotaNote,
         @Nullable LonLatBounds coverage,
-        @Nullable List<String> languages) {
+        @Nullable List<String> languages,
+        @Nullable String logo) {
 
     /**
      * The device names Windows reserves, in any case and with any extension: {@code con.pdf} is the
@@ -129,6 +134,10 @@ public record Provider(
         final List<String> named = languages == null ? List.of() : languages.stream()
                 .filter(Objects::nonNull).map(String::trim).filter(s -> !s.isEmpty()).distinct().toList();
         languages = named.isEmpty() ? null : named;
+        // The same of a logo: a credit in words only
+        if (logo != null && logo.isBlank()) {
+            logo = null;
+        }
     }
 
     public @NotNull Auth authOrNone() {

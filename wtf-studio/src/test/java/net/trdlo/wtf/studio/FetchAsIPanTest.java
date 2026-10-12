@@ -20,14 +20,14 @@ class FetchAsIPanTest {
         return new Provider("maptiler", "MapTiler", "https://x/{z}/{x}/{y}.png",
                 new Provider.Auth(Provider.AuthKind.QUERY, "key"), 0, 19, null,
                 List.of(new Provider.Theme("basic", "Basic", null, null, null, null, false, null)),
-                null, "none", null, null, null, bulkDownload, null, null, null);
+                null, "none", null, null, null, bulkDownload, null, null, null, null);
     }
 
     private static Provider viewingOnlyProvider() {
         return new Provider("esri", "Esri", "https://x/{z}/{x}/{y}.png",
                 null, 0, 19, null,
                 List.of(new Provider.Theme("world", "World", null, null, null, null, false, null)),
-                null, "none", null, null, null, false, null, null, null);
+                null, "none", null, null, null, false, null, null, null, null);
     }
 
     private static TileKey tile(final int x, final int y) {

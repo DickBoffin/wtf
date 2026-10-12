@@ -56,7 +56,7 @@ class StartPageTest {
     private static @NotNull Provider standIn(final @NotNull String id, final @NotNull String theme) {
         return new Provider(id, "Stand-in for " + id, "http://127.0.0.1:1/{z}/{x}/{y}.png", null, 0, 19,
                 null, List.of(new Provider.Theme(theme, "Map", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
     }
 
     /**

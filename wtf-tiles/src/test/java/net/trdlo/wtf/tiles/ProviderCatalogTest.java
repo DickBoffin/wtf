@@ -150,6 +150,31 @@ class ProviderCatalogTest {
     }
 
     @Test
+    @DisplayName("Mapy.com's credit is printed with its logo, bundled as an SVG, and a logo WTF lacks is refused")
+    void aLogoIsOneWtfBundles() {
+        final Provider mapy = CATALOG.require("mapy-com");
+        assertEquals("mapy-com.svg", mapy.logo(), "its terms ask for the logo with the attribution");
+        final String svg = new String(ProviderCatalog.logo(mapy.logo()), StandardCharsets.UTF_8);
+        assertTrue(svg.startsWith("<svg") && svg.contains("<path"), "the file as Mapy.com publishes it");
+        assertNull(CATALOG.require("osm").logo(), "every other credit is words only");
+
+        for (final String name : List.of("nonesuch.svg", "../providers.json", "logos/mapy-com.svg", "Mapy-com.svg")) {
+            final Provider named = withLogo(keyedBy(Provider.Auth.NONE), name);
+            final Refusal r = assertThrows(Refusal.class, () -> ProviderCatalog.validate(named), name);
+            assertEquals(ProviderReason.LOGO_UNKNOWN, r.reason());
+            assertEquals(List.of("keyed", name), r.args());
+            assertThrows(IllegalArgumentException.class, () -> ProviderCatalog.logo(name), name);
+        }
+        assertNull(withLogo(mapy, " ").logo(), "a blank name is none, as a blank list of languages is");
+    }
+
+    private static Provider withLogo(final Provider p, final String logo) {
+        return new Provider(p.id(), p.displayName(), p.urlTemplate(), p.auth(), p.minZoom(), p.maxZoom(),
+                p.expectedFormat(), p.themes(), p.subdomains(), p.attribution(), p.signupUrl(),
+                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), p.languages(), logo);
+    }
+
+    @Test
     @DisplayName("the redacted template never shows a key")
     void redaction() {
         for (final Provider p : CATALOG.all()) {
@@ -264,7 +289,7 @@ class ProviderCatalogTest {
     private static Provider keyedAt(final String template) {
         return new Provider("test", "Test", template, new Provider.Auth(Provider.AuthKind.QUERY, "key"), 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
     }
 
     @Test
@@ -284,7 +309,7 @@ class ProviderCatalogTest {
         final Provider bad = new Provider("bad", "Bad", "https://x/{zoom}/{x}/{y}.png",
                 null, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "none", null, null, null, true, null, null, null);
+                null, "none", null, null, null, true, null, null, null, null);
         final IllegalArgumentException ex =
                 assertThrows(IllegalArgumentException.class, () -> ProviderCatalog.validate(bad));
         assertTrue(ex.getMessage().contains("{zoom}"), ex.getMessage());
@@ -418,7 +443,7 @@ class ProviderCatalogTest {
     private static Provider withIds(final String id, final String themeId) {
         return new Provider(id, "Ids", "https://x.example/{theme}/{z}/{x}/{y}.png", null, 0, 19, null,
                 List.of(new Provider.Theme(themeId, "T", null, null, null, null, false, null)),
-                null, "x", null, null, null, true, null, null, null);
+                null, "x", null, null, null, true, null, null, null, null);
     }
 
     /**
@@ -457,7 +482,7 @@ class ProviderCatalogTest {
     private static Provider keyedBy(final Provider.Auth auth) {
         return new Provider("keyed", "Keyed", "https://x.example/{z}/{x}/{y}.png", auth, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "x", null, null, null, true, null, null, null);
+                null, "x", null, null, null, true, null, null, null, null);
     }
 
     @Test

@@ -225,6 +225,17 @@ bottom-right sheet and, when asked for, the map scale in the bottom-left corner 
 sheet, both 3 mm in from the white edge (D14); on one sheet narrower than 120 mm the scale goes a
 line above the credit.
 
+**The credit's logo.** Where the provider's definition names one (`Provider.logo`, Mapy.com's:
+[providers.md](providers.md) §3), the logo takes the corner and the words end half their size
+before it. It is as tall as they are set, 7 pt from the top of what it paints to the bottom, and
+centered on their capitals (`SeamMarks.Logo`). `CreditLogo` reads the bundled SVG – filled paths of
+straight lines and cubic curves, each one of PDF's own operators, in flat colors; anything else is
+refused by name – and takes a fill's opacity as the color it makes over white, drawn opaque, since
+a RIP flattens a page with anything transparent on it and the copied tiles under it with it. The
+PDF makes the logo one form XObject a document, its paths as the file has them, drawn by the page
+that carries the credit and counted in the `/ID`; a raster draws the same shapes into its pixels.
+Every other credit is its words alone.
+
 **The scale** is `Marks.scale`, a `ScaleMark`: a ratio, a bar or both, the bar first. It is the job's
 print's `mapScale`, true at the center latitude. The **ratio** is `1:50 000`, the thousands apart by
 a narrow no-break space, and where Mercator's scale differs by more than 1% between the print's top

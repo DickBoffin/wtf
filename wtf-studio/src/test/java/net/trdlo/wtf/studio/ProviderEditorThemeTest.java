@@ -97,6 +97,6 @@ class ProviderEditorThemeTest {
     private static Provider providerWith(final ThemeRow row) {
         return new Provider("p", "P", ADDRESS, null, 0, 19, null,
                 List.of(ProviderEditor.themeOf(row, ADDRESS)),
-                null, "none", null, null, null, true, null, null, null);
+                null, "none", null, null, null, true, null, null, null, null);
     }
 }

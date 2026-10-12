@@ -91,6 +91,7 @@ class ProviderStoreTest {
         final Provider loaded = ProviderCatalog.load(s.file()).require("mapy-com");
         assertEquals("Renamed", loaded.displayName());
         assertEquals(original.urlTemplate(), loaded.urlTemplate(), "the rest came along");
+        assertEquals("mapy-com.svg", loaded.logo(), "the logo its credit is printed with among it");
     }
 
     @Test
@@ -173,7 +174,7 @@ class ProviderStoreTest {
         final Provider noCredit = new Provider(p.id(), p.displayName(), p.urlTemplate(), p.auth(),
                 p.minZoom(), p.maxZoom(), p.expectedFormat(), p.themes(), p.subdomains(),
                 "  ", p.signupUrl(), p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(),
-                p.coverage(), p.languages());
+                p.coverage(), p.languages(), p.logo());
         assertTrue(refusal(store(dir), noCredit).toLowerCase(java.util.Locale.ROOT)
                 .contains("attribution"));
     }
@@ -653,13 +654,14 @@ class ProviderStoreTest {
     private static Provider withLanguages(final Provider p, final List<String> languages) {
         return new Provider(p.id(), p.displayName(), p.urlTemplate(), p.auth(), p.minZoom(), p.maxZoom(),
                 p.expectedFormat(), p.themes(), p.subdomains(), p.attribution(), p.signupUrl(),
-                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), languages);
+                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), languages, p.logo());
     }
 
     private static Provider withTemplate(final Provider p, final String template) {
         return new Provider(p.id(), p.displayName(), template, p.auth(), p.minZoom(), p.maxZoom(),
                 p.expectedFormat(), p.themes(), p.subdomains(), p.attribution(), p.signupUrl(),
-                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), p.languages());
+                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), p.languages(),
+                p.logo());
     }
 
     private static Provider.Theme theme(final String id) {
@@ -669,13 +671,14 @@ class ProviderStoreTest {
     private static Provider withAuth(final Provider p, final Provider.Auth auth) {
         return new Provider(p.id(), p.displayName(), p.urlTemplate(), auth, p.minZoom(), p.maxZoom(),
                 p.expectedFormat(), p.themes(), p.subdomains(), p.attribution(), p.signupUrl(),
-                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), p.languages());
+                p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(), p.coverage(), p.languages(),
+                p.logo());
     }
 
     private static Provider withThemes(final Provider p, final List<Provider.Theme> themes) {
         return new Provider(p.id(), p.displayName(), p.urlTemplate(), p.auth(), p.minZoom(),
                 p.maxZoom(), p.expectedFormat(), themes, p.subdomains(), p.attribution(),
                 p.signupUrl(), p.signupHint(), p.termsUrl(), p.bulkDownload(), p.quotaNote(),
-                p.coverage(), p.languages());
+                p.coverage(), p.languages(), p.logo());
     }
 }

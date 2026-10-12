@@ -19,7 +19,10 @@
     "first provider that is global and needs no key. That is OpenStreetMap, so it comes before Esri.",
     "",
     "A provider's languages are in an order too: the first is its own, which a map of it is lettered",
-    "in where nothing names one – a project file without source.lang, wtf-tiles without --lang."
+    "in where nothing names one – a project file without source.lang, wtf-tiles without --lang.",
+    "",
+    "A provider whose terms ask for its logo with the attribution names it in logo: an SVG file in",
+    "logos/ beside this one, the provider's own as published. The credit is printed with it."
   ],
   "providers": [
     {
@@ -43,6 +46,7 @@
           "urlTemplate": "https://api.mapy.com/v1/maptiles/{theme}/256/{z}/{x}/{y}?lang={lang}", "note": "No @2x (404)." }
       ],
       "attribution": "© Seznam.cz a.s., © OpenStreetMap contributors",
+      "logo": "mapy-com.svg",
       "signupUrl": "https://developer.mapy.com/",
       "signupHint": "Create a developer account at developer.mapy.com and generate an API key in the dashboard. The free tier has a monthly request allowance and requests beyond it are billed, so check what is left before a large download. Attribution, including the Mapy.com logo, is required.",
       "termsUrl": "https://developer.mapy.com/terms/",

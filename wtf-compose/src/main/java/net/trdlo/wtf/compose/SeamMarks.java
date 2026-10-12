@@ -1,5 +1,6 @@
 package net.trdlo.wtf.compose;
 
+import net.trdlo.wtf.tiles.Provider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +44,12 @@ public final class SeamMarks {
     static final double MARK_PT = 6;
     static final double CREDIT_PT = 7;
 
+    /**
+     * Between the credit's words and the logo after them: half the type size, nearly two spaces, so
+     * that the words' halo and the logo's do not run together.
+     */
+    static final double LOGO_GAP_MM = CREDIT_PT * 25.4 / 72 / 2;
+
     /** The longest a scale bar is drawn: it is the round distance that fits. */
     static final double BAR_MAX_MM = 40;
 
@@ -81,7 +88,7 @@ public final class SeamMarks {
     /** Which point of a text its position names. */
     public enum Anchor { START, MIDDLE, END }
 
-    public sealed interface Mark permits Line, Text { }
+    public sealed interface Mark permits Line, Text, Logo { }
 
     /**
      * @param registration true for the registration hairline, false for an arrow's strokes or the
@@ -105,6 +112,12 @@ public final class SeamMarks {
      */
     public record Text(double x, double y, double angle, double sizePt, @NotNull String text,
                        @NotNull Style style, @NotNull Anchor anchor) implements Mark { }
+
+    /**
+     * The provider's logo beside the credit's words, where its definition names one: the box on the
+     * page its shapes fill, from its top-left corner.
+     */
+    public record Logo(double x, double y, double width, double height, @NotNull CreditLogo logo) implements Mark { }
 
     /** A hidden strip: a rectangle on the page, and which way it runs. */
     public record Strip(double x0, double y0, double x1, double y1, boolean vertical) {
@@ -183,8 +196,7 @@ public final class SeamMarks {
         if (m.credit() && sheet.column() == layout.columns() - 1 && sheet.row() == layout.rows() - 1
                 && !job.provider().attribution().isBlank()) {
             final double inset = e + CREDIT_INSET_MM;
-            out.add(new Text(sheet.widthMm() - inset, sheet.heightMm() - inset, 0, CREDIT_PT,
-                    job.provider().attribution(), Style.CREDIT, Anchor.END));
+            credit(out, job.provider(), sheet.widthMm() - inset, sheet.heightMm() - inset);
         }
         final ScaleMark scale = m.scale();
         if (scale != null && sheet.column() == 0 && sheet.row() == layout.rows() - 1) {
@@ -196,6 +208,31 @@ public final class SeamMarks {
             scale(out, job.print(), scale, inset, sheet.heightMm() - inset - (shared ? CREDIT_LINE_MM : 0));
         }
         return out;
+    }
+
+    /**
+     * The credit, ending at {@code end} on the baseline at {@code baseline}: the provider's
+     * attribution, and where its definition names a logo, the logo after the words, in the corner.
+     * <p>
+     * <b>The logo is as tall as the words are set</b> – {@link #CREDIT_PT} from the top of what it
+     * paints to the bottom – and centered on the middle of their capitals, as a sign set in a line
+     * of type is: Mapy.com's letters then stand on the words' baseline. The words end
+     * {@link #LOGO_GAP_MM} before it.
+     */
+    private static void credit(final @NotNull List<Mark> out, final @NotNull Provider provider,
+                               final double end, final double baseline) {
+        final CreditLogo logo = CreditLogo.of(provider);
+        if (logo == null) {
+            out.add(new Text(end, baseline, 0, CREDIT_PT, provider.attribution(), Style.CREDIT, Anchor.END));
+            return;
+        }
+        final double height = CREDIT_PT * PT_MM;
+        final double width = height * logo.aspect();
+        // A capital's height, as the scale's labels take it
+        final double middle = baseline - CREDIT_PT * PT_MM * 0.72 / 2;
+        out.add(new Text(end - width - LOGO_GAP_MM, baseline, 0, CREDIT_PT, provider.attribution(),
+                Style.CREDIT, Anchor.END));
+        out.add(new Logo(end - width, middle - height / 2, width, height, logo));
     }
 
     /**

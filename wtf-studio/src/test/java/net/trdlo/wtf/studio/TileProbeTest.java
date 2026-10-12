@@ -57,7 +57,7 @@ class TileProbeTest {
         provider = new Provider("probe-test", "Probe Test",
                 "http://127.0.0.1:" + server.getAddress().getPort() + "/{z}/{x}/{y}.png", null, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
     }
 
     @AfterEach
@@ -90,7 +90,7 @@ class TileProbeTest {
         final Provider retina = new Provider("retina-test", "Retina Test",
                 "http://127.0.0.1:" + server.getAddress().getPort() + "/{z}/{x}/{y}{scale}.png", null, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
         final TileKey tile = ProvidersDialog.probeTile(retina);
 
         assertEquals("A tile came back: PNG, 256 × 256 px, " + I18n.bytes(png(256).length)
@@ -143,7 +143,7 @@ class TileProbeTest {
     private static Provider lettered(final @Nullable List<String> languages) {
         return new Provider("lettered", "Lettered", "http://127.0.0.1:1/{z}/{x}/{y}.png?lang={lang}", null,
                 0, 19, null, List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, languages);
+                null, "test", null, null, null, true, null, null, languages, null);
     }
 
     private static void assertEmpty(final Path parent) {

@@ -447,7 +447,10 @@ public final class ProviderStore {
         }
     }
 
-    /** A copy under a new id, as the sane way to base a new provider on an existing one. */
+    /**
+     * A copy under a new id, as the sane way to base a new provider on an existing one. Its logo
+     * too: the tiles are the same provider's, and so is what their credit has to carry.
+     */
     public static @NotNull Provider copyUnder(final @NotNull Provider source, final @NotNull String newId,
                                               final @NotNull String newName) {
         return new Provider(newId, newName, source.urlTemplate(), source.auth(),
@@ -455,7 +458,8 @@ public final class ProviderStore {
                 List.copyOf(source.themes()),
                 source.subdomains() == null ? null : List.copyOf(source.subdomains()),
                 source.attribution(), source.signupUrl(), source.signupHint(), source.termsUrl(),
-                source.bulkDownload(), source.quotaNote(), source.coverage(), source.languages());
+                source.bulkDownload(), source.quotaNote(), source.coverage(), source.languages(),
+                source.logo());
     }
 
     /** A new entry with the least that will load, as the starting point for "Add". */
@@ -466,7 +470,7 @@ public final class ProviderStore {
                 List.of(new Provider.Theme("default", "Default", null, null, null, null, false, null)),
                 null, "Set the attribution this provider requires", null, null, null, true, null,
                 // Global until somebody says otherwise: see Provider.isGlobal
-                null, null);
+                null, null, null);
     }
 
     // -------------------------------------------------------------------------------------------

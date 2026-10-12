@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -30,6 +31,12 @@ public final class ProviderCatalog {
     private static final Logger log = LoggerFactory.getLogger(ProviderCatalog.class);
 
     private static final String RESOURCE = "providers.json";
+
+    /** Where the logos a credit is printed with are bundled: in a folder beside that file. */
+    private static final String LOGOS = "logos/";
+
+    /** What a logo's name may be: one SVG file in that folder, never a path out of it. */
+    private static final Pattern LOGO_NAME = Pattern.compile("[a-z0-9][a-z0-9._-]*\\.svg");
 
     /** Tokens a template may contain. Anything else is a typo, and is rejected at load time. */
     private static final Set<String> KNOWN_TOKENS =
@@ -195,6 +202,11 @@ public final class ProviderCatalog {
                 }
             }
         }
+        // The credit is printed with it, so a name with nothing behind it would print a credit
+        // without the logo the provider's terms ask for
+        if (p.logo() != null && !isBundledLogo(p.logo())) {
+            throw new Refusal(ProviderReason.LOGO_UNKNOWN, p.id(), p.logo());
+        }
         final Set<String> themeIds = new HashSet<>();
         for (final Provider.Theme t : p.themes()) {
             final String themeId = Objects.requireNonNullElse(t.id(), "");
@@ -234,6 +246,32 @@ public final class ProviderCatalog {
                 throw new Refusal(ProviderReason.ZOOMS_INVERTED, p.id(), themeId);
             }
         }
+    }
+
+    /**
+     * The file of a logo a definition names for its credit ({@link Provider#logo}), as WTF bundles
+     * it: the provider's own SVG, byte for byte as published, which the exporters draw. Shipped
+     * definitions and the user's name the same files, so that a provider made one's own, or
+     * duplicated, keeps its logo.
+     *
+     * @throws IllegalArgumentException when WTF bundles no logo of that name, which {@link #validate}
+     *                                  refuses a definition for
+     */
+    public static byte @NotNull [] logo(final @NotNull String name) {
+        if (LOGO_NAME.matcher(name).matches()) {
+            try (final InputStream in = ProviderCatalog.class.getResourceAsStream(LOGOS + name)) {
+                if (in != null) {
+                    return in.readAllBytes();
+                }
+            } catch (final IOException ex) {
+                throw new UncheckedIOException("Cannot read the bundled logo " + name, ex);
+            }
+        }
+        throw new IllegalArgumentException("WTF bundles no logo called '" + name + "'");
+    }
+
+    private static boolean isBundledLogo(final @NotNull String name) {
+        return LOGO_NAME.matcher(name).matches() && ProviderCatalog.class.getResource(LOGOS + name) != null;
     }
 
     /** Everything known, hidden or not. What the Providers dialog lists. */

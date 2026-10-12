@@ -56,7 +56,7 @@ class AllSeaPrintTest {
         sea = new Provider("sea-test", "Sea Test",
                 "http://127.0.0.1:" + server.getAddress().getPort() + "/{z}/{x}/{y}.png", null, 0, 19, null,
                 List.of(new Provider.Theme("t", "T", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
     }
 
     @AfterEach

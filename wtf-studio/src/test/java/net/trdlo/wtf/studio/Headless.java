@@ -177,6 +177,6 @@ public final class Headless {
     public static Provider nowhere() {
         return new Provider("wtf-test-nowhere", "Nowhere", "http://127.0.0.1:1/{z}/{x}/{y}.png", null, 0, 19,
                 null, List.of(new Provider.Theme("map", "Map", null, null, null, null, false, null)),
-                null, "test", null, null, null, true, null, null, null);
+                null, "test", null, null, null, true, null, null, null, null);
     }
 }

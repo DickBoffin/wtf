@@ -41,6 +41,8 @@ public final class ProviderEditor extends StudioDialog<Provider> {
     private @Nullable TileFormat keptFormat;
     /** Not editable in the form yet; carried so editing a shipped provider does not widen it. */
     private @Nullable net.trdlo.wtf.tiles.LonLatBounds keptCoverage;
+    /** Not editable; carried so that a provider made one's own still prints its credit with its logo. */
+    private @Nullable String keptLogo;
 
     private final TextField id = new TextField();
     private final TextField displayName = new TextField();
@@ -160,6 +162,7 @@ public final class ProviderEditor extends StudioDialog<Provider> {
         this.originalId = existing == null ? null : existing.id();
         this.keptFormat = existing == null ? null : existing.expectedFormat();
         this.keptCoverage = existing == null ? null : existing.coverage();
+        this.keptLogo = existing == null ? null : existing.logo();
 
         getDialogPane().setPrefSize(720, 620);
 
@@ -452,7 +455,7 @@ public final class ProviderEditor extends StudioDialog<Provider> {
                 attribution.getText().trim(), blankToNull(signupUrl.getText()),
                 blankToNull(signupHint.getText()), blankToNull(termsUrl.getText()),
                 bulkDownload.isSelected(), blankToNull(quotaNote.getText()), keptCoverage,
-                listOf(languages.getText()));
+                listOf(languages.getText()), keptLogo);
     }
 
     /**

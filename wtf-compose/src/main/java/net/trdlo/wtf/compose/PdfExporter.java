@@ -52,6 +52,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -113,10 +114,11 @@ public final class PdfExporter {
             if (plan.fade() != null) {
                 content.update(plan.fade().grid().digest());
             }
+            final LogoForms logos = new LogoForms(doc, content);
 
             for (final TilePlan.SheetPlan sp : sheets) {
                 Composer.CanceledException.check(progress);
-                placed += writePage(doc, images, lettering, job, plan, sp, tiles, progress, content);
+                placed += writePage(doc, images, lettering, logos, job, plan, sp, tiles, progress, content);
             }
             // A cancel after the last tile still spares the save
             Composer.CanceledException.check(progress);
@@ -180,8 +182,9 @@ public final class PdfExporter {
 
     /**
      * Gives the document an {@code /ID} worked out from what is in it: the file's name, each page's
-     * size and drawing, and every image. The same export is then the same file, byte for byte –
-     * acceptance criterion 4 in docs/README.md – and two different files have two identifiers.
+     * size and drawing, the credit's logo, and every image. The same export is then the same file,
+     * byte for byte – acceptance criterion 4 in docs/README.md – and two different files have two
+     * identifiers.
      * <p>
      * <b>Not the clock.</b> PDFBox makes one from the time when a document has none, and that alone
      * made every export of one project a different file. The name is in it because a sheet's own
@@ -216,7 +219,7 @@ public final class PdfExporter {
     }
 
     private static int writePage(final @NotNull PDDocument doc, final @NotNull PdfTileImages images,
-                                 final @NotNull Lettering lettering,
+                                 final @NotNull Lettering lettering, final @NotNull LogoForms logos,
                                  final @NotNull ComposeJob job, final TilePlan.@NotNull Plan plan,
                                  final @NotNull TilePlan.SheetPlan sp,
                                  final @NotNull TileSource tiles, final @NotNull ProgressSink progress,
@@ -304,7 +307,7 @@ public final class PdfExporter {
                 cs.restoreGraphicsState();      // past the area's shape, onto the paper again
             }
             strokeBoundary(cs, job, sheet, onPage.subject());
-            drawMarks(cs, lettering, job, layout, sheet, hPt);
+            drawMarks(cs, lettering, logos, job, layout, sheet, hPt);
         }
         fingerprint(pages, page);
         return placed;
@@ -577,8 +580,98 @@ public final class PdfExporter {
         }
     }
 
+    /**
+     * The credit's logo, made a form of its document's when the first page that carries the credit
+     * draws it: one object in the file however many pages draw it, as a tile is one image however
+     * many place it. What the form draws goes into the file's {@code /ID} as it is made, since a
+     * page names it and does not carry it ({@link #identify}).
+     */
+    static final class LogoForms {
+
+        private final PDDocument doc;
+        private final MessageDigest pages;
+        private final Map<CreditLogo, PDFormXObject> made = new HashMap<>();
+
+        LogoForms(final @NotNull PDDocument doc, final @NotNull MessageDigest pages) {
+            this.doc = doc;
+            this.pages = pages;
+        }
+
+        @NotNull PDFormXObject of(final @NotNull CreditLogo logo) throws IOException {
+            PDFormXObject form = made.get(logo);
+            if (form == null) {
+                form = logoForm(doc, logo);
+                try (final InputStream in = new DigestInputStream(form.getContentStream().createInputStream(), pages)) {
+                    in.transferTo(OutputStream.nullOutputStream());
+                }
+                made.put(logo, form);
+            }
+            return form;
+        }
+    }
+
+    /**
+     * The logo as a form: each of its fills a path filled in its color by its rule, point for point
+     * as the file has it, in the file's units and box – y down, which the matrix that places the
+     * form turns the right way up ({@link #drawLogo}). Opaque, as {@link CreditLogo} reads it.
+     */
+    private static @NotNull PDFormXObject logoForm(final @NotNull PDDocument doc, final @NotNull CreditLogo logo)
+            throws IOException {
+        final PDFormXObject form = new PDFormXObject(doc);
+        form.setResources(new PDResources());
+        final Rectangle2D box = logo.box();
+        form.setBBox(new PDRectangle((float) box.getX(), (float) box.getY(),
+                (float) box.getWidth(), (float) box.getHeight()));
+        try (final PDFormContentStream fcs = new PDFormContentStream(form)) {
+            for (final CreditLogo.Fill f : logo.fills()) {
+                fcs.setNonStrokingColor(new Color(f.rgb()));
+                appendPath(fcs, f.path());
+                if (f.path().getWindingRule() == PathIterator.WIND_EVEN_ODD) {
+                    fcs.fillEvenOdd();
+                } else {
+                    fcs.fill();
+                }
+            }
+        }
+        return form;
+    }
+
+    /** A path of lines and cubic curves into a form's current path, segment for segment. */
+    private static void appendPath(final @NotNull PDFormContentStream cs, final @NotNull Shape path)
+            throws IOException {
+        final double[] c = new double[6];
+        for (final PathIterator it = path.getPathIterator(null); !it.isDone(); it.next()) {
+            switch (it.currentSegment(c)) {
+                case PathIterator.SEG_MOVETO -> cs.moveTo((float) c[0], (float) c[1]);
+                case PathIterator.SEG_LINETO -> cs.lineTo((float) c[0], (float) c[1]);
+                case PathIterator.SEG_CUBICTO -> cs.curveTo((float) c[0], (float) c[1], (float) c[2], (float) c[3],
+                        (float) c[4], (float) c[5]);
+                case PathIterator.SEG_CLOSE -> cs.closePath();
+                default -> throw new IllegalStateException("A quadratic curve, which CreditLogo does not make");
+            }
+        }
+    }
+
+    /**
+     * The credit's logo in its mark's box: its form scaled so that what it paints is the box's
+     * height, and turned the right way up – the file counts down from its top, a page up from its
+     * bottom.
+     */
+    private static void drawLogo(final @NotNull PDPageContentStream cs, final @NotNull PDFormXObject form,
+                                 final SeamMarks.@NotNull Logo l, final double hPt) throws IOException {
+        final Rectangle2D painted = l.logo().painted();
+        final double s = mmToPt(l.height()) / painted.getHeight();
+        // The painted box's top-left corner onto the mark's
+        final double x = mmToPt(l.x()) - s * painted.getX();
+        final double y = hPt - mmToPt(l.y()) + s * painted.getY();
+        cs.saveGraphicsState();
+        cs.transform(new Matrix((float) s, 0, 0, (float) -s, (float) x, (float) y));
+        cs.drawForm(form);
+        cs.restoreGraphicsState();
+    }
+
     private static void drawMarks(final @NotNull PDPageContentStream cs, final @NotNull Lettering lettering,
-                                  final @NotNull ComposeJob job,
+                                  final @NotNull LogoForms logos, final @NotNull ComposeJob job,
                                   final @NotNull SheetLayout layout, final SheetLayout.@NotNull Sheet sheet,
                                   final double hPt) throws IOException {
         final List<SeamMarks.Mark> marks = SeamMarks.forSheet(job, layout, sheet);
@@ -599,6 +692,7 @@ public final class PdfExporter {
                     }
                 }
                 case SeamMarks.Text t -> drawText(cs, lettering.font(), t, hPt);
+                case SeamMarks.Logo l -> drawLogo(cs, logos.of(l.logo()), l, hPt);
             }
         }
     }

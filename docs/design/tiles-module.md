@@ -10,7 +10,7 @@ No JavaFX, no sheets or prints, no image decoding. It hands out `byte[]` and `Pa
 ```
 Provider          id, displayName, urlTemplate, auth, minZoom, maxZoom, expectedFormat, themes[],
                   subdomains, attribution, signupUrl, signupHint, termsUrl, bulkDownload,
-                  quotaNote, coverage, languages
+                  quotaNote, coverage, languages, logo
 Provider.Theme    id, displayName; minZoom, maxZoom, expectedFormat, urlTemplate that override the
                   provider's; transparent, note
 ProviderCatalog   the shipped providers.json with the user's file merged over it
@@ -61,6 +61,7 @@ first `json` one under this heading):
       "urlTemplate": "https://api.mapy.com/v1/maptiles/{theme}/256/{z}/{x}/{y}?lang={lang}" }
   ],
   "attribution": "© Seznam.cz a.s., © OpenStreetMap contributors",
+  "logo": "mapy-com.svg",
   "signupUrl": "https://developer.mapy.com/",
   "signupHint": "Create a developer account at developer.mapy.com and generate an API key.",
   "termsUrl": "https://developer.mapy.com/terms/",
@@ -71,6 +72,10 @@ first `json` one under this heading):
 
 `signupUrl` and `signupHint` are shown beside the key field. `coverage`, a
 `{ west, south, east, north }` box, is absent for a global provider ([providers.md](providers.md) §1).
+`logo`, for a provider whose terms ask for its logo with the attribution, names the SVG file in
+`logos/` beside the shipped `providers.json` that the credit is printed with – Mapy.com's
+([providers.md](providers.md) §3, [compose-module.md](compose-module.md) §4); a definition, shipped
+or the user's, naming one WTF does not bundle is refused at load.
 
 **Tokens**: `{theme}` `{z}` `{x}` `{y}` `{scale}` `{lang}` `{key}` `{s}`; an unknown one is refused
 at load. `{key}` puts the key in percent-encoded, as one value: every UTF-8 byte but the letters,

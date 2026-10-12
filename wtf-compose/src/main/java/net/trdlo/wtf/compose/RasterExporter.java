@@ -524,9 +524,25 @@ public final class RasterExporter {
                     }
                 }
                 case SeamMarks.Text t -> drawText(g, t, pxPerMm);
+                case SeamMarks.Logo l -> drawLogo(g, l, pxPerMm);
             }
         }
         g.setTransform(before);
+    }
+
+    /**
+     * The credit's logo in its mark's box: its fills, in their colors, scaled so that what it
+     * paints is the box's height – the shapes the PDF draws as paths, drawn into the pixels.
+     */
+    private static void drawLogo(final @NotNull Graphics2D g, final SeamMarks.@NotNull Logo l, final double pxPerMm) {
+        final java.awt.geom.Rectangle2D painted = l.logo().painted();
+        final double s = l.height() * pxPerMm / painted.getHeight();
+        final AffineTransform at = new AffineTransform(s, 0, 0, s,
+                l.x() * pxPerMm - s * painted.getX(), l.y() * pxPerMm - s * painted.getY());
+        for (final CreditLogo.Fill f : l.logo().fills()) {
+            g.setColor(new Color(f.rgb()));
+            g.fill(at.createTransformedShape(f.path()));
+        }
     }
 
     /**
