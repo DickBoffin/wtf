@@ -216,6 +216,12 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.22.0</version>
+                    <configuration>
+                        <!-- versions:set would move project.build.outputTimestamp to the moment
+                             it runs, and each platform of a release runs it at its own moment,
+                             so their jars would differ by the time inside them -->
+                        <updateBuildOutputTimestampPolicy>never</updateBuildOutputTimestampPolicy>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
