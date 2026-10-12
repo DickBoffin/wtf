@@ -1,0 +1,24 @@
+# Weekly proposals for the Maven dependencies and plugins, and for the workflows' actions, which
+# are pinned by commit and so would otherwise never move. Each is a pull request, and the build
+# on it is the review's first half.
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One family, one version: the root pom's comment on jackson.version says why
+      jackson:
+        patterns: ['com.fasterxml.jackson*']
+      javafx:
+        patterns: ['org.openjfx:*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

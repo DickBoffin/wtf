@@ -1,0 +1,101 @@
+# Tests on Linux on every push (D31), plus the one job that makes the module split mean something.
+#
+# The installers are built by release.yml, on a tag or by hand. Actions are pinned by commit, with
+# the release they are in the comment; Dependabot proposes the next one.
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch makes the older run's answer uninteresting
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# A push to a branch with a pull request open triggers both events, and the two runs are in
+# different groups above – refs/heads/<branch> and refs/pull/<n>/merge – so neither cancels the
+# other. The push run is the one kept: every job below skips a pull request from a branch of this
+# repository, and still runs one from a fork, which has no push run here.
+jobs:
+  build:
+    name: Build and test
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      # verify, which is what `mvn install` runs locally too: the tests, the enforcer's ban on
+      # JavaFX in the engine and SpotBugs, whose high-priority findings fail it
+      - name: Build and test
+        run: mvn -B verify
+
+      # The installers' runtime is linked from the modules jdeps finds the jars using. A
+      # dependency that needs another one fails here, on the push that brought it, and not in an
+      # installed application after the next release.
+      - name: The runtime's modules are the ones listed
+        run: tools/package/runtime-modules.sh --check
+
+      - name: Upload jars
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        with:
+          name: jars
+          path: '*/target/*.jar'
+          if-no-files-found: error
+
+  engine-without-javafx:
+    name: The engine builds and runs without the GUI
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      # CLAUDE.md and D1: wtf-tiles and wtf-compose must build and run with no JavaFX
+      # anywhere near them. Building them without wtf-studio is what turns that from an
+      # intention into a fact, and it is the reason the split exists at all. The enforcer rule in
+      # both modules fails the build if JavaFX reaches them in any scope; the tests ran above.
+      - name: Build wtf-compose and its dependencies alone
+        run: mvn -B -pl wtf-compose -am install -DskipTests -Dspotbugs.skip
+
+      # And run: a project written and laid out by the command line, on a JDK with no JavaFX in it
+      - name: Run the compose command line
+        run: |
+          mvn -B -q -pl wtf-compose dependency:build-classpath -DincludeScope=runtime \
+              -Dmdep.outputFile="$RUNNER_TEMP/classpath.txt"
+          CP="wtf-compose/target/classes:$(cat "$RUNNER_TEMP/classpath.txt")"
+          java -cp "$CP" net.trdlo.wtf.compose.ComposeCli sample \
+              --out "$RUNNER_TEMP/sample.wtf" --bbox 14.3,49.9,14.6,50.2 --zoom 12
+          java -cp "$CP" net.trdlo.wtf.compose.ComposeCli layout "$RUNNER_TEMP/sample.wtf"
+
+      # And log: an export from an empty cache, told to print the gaps as paper, warns that tiles
+      # are missing. The warning has to reach stderr – with logback in test scope in wtf-compose
+      # the command line had no SLF4J provider and said nothing at all.
+      - name: The compose command line logs a warning
+        run: |
+          CP="wtf-compose/target/classes:$(cat "$RUNNER_TEMP/classpath.txt")"
+          java -cp "$CP" net.trdlo.wtf.compose.ComposeCli export "$RUNNER_TEMP/sample.wtf" \
+              --cache "$RUNNER_TEMP/no-tiles" --out "$RUNNER_TEMP/export" --missing transparent \
+              2> "$RUNNER_TEMP/stderr.txt"
+          cat "$RUNNER_TEMP/stderr.txt"
+          if grep -q 'No SLF4J providers' "$RUNNER_TEMP/stderr.txt"; then exit 1; fi
+          grep -q '^WARN .*missing tile' "$RUNNER_TEMP/stderr.txt"

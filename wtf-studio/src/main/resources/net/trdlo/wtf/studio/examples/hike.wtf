@@ -1,0 +1,66 @@
+{
+  "format" : "wtf",
+  "saved" : "2026-10-10T09:19:59.437461900Z",
+  "source" : {
+    "provider" : "swisstopo",
+    "theme" : "pixelkarte-farbe",
+    "lang" : "en"
+  },
+  "area" : {
+    "kind" : "rectangle",
+    "source" : "custom",
+    "polygons" : [ [ [ [ 7.645, 45.966 ], [ 7.645, 46.028 ], [ 7.765, 46.028 ], [ 7.765, 45.966 ], [ 7.645, 45.966 ] ] ] ]
+  },
+  "refine" : {
+    "custom" : {
+      "source" : "drawn",
+      "polygons" : [ [ [ [ 7.645, 46.028 ], [ 7.765, 46.028 ], [ 7.765, 45.966 ], [ 7.645, 45.966 ], [ 7.645, 46.028 ] ] ] ]
+    },
+    "bufferValue" : 0.0
+  },
+  "regions" : {
+    "zoom" : 15,
+    "inside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.0,
+        "contrast" : 0.0
+      }
+    },
+    "outside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.0,
+        "contrast" : 0.0
+      }
+    }
+  },
+  "print" : {
+    "sizeMode" : "FIT_WIDTH",
+    "widthMm" : 371.19934383052424,
+    "backgroundColor" : "#FFFFFF",
+    "setAside" : {
+      "sizeMode" : "FIT_WIDTH",
+      "widthMm" : 210.0
+    },
+    "mapScale" : 25000
+  },
+  "medium" : {
+    "kind" : "SHEET",
+    "sheetWidthMm" : 210.0,
+    "sheetHeightMm" : 297.0,
+    "orientation" : "PORTRAIT",
+    "overlapMm" : 15.0,
+    "edgeMm" : 5.0
+  },
+  "export" : {
+    "formats" : [ "PDF" ],
+    "grouping" : "SINGLE_DOCUMENT",
+    "baseName" : "zermatt",
+    "missingTiles" : "REFUSE",
+    "credit" : true,
+    "scale" : "BAR"
+  }
+}

@@ -1,0 +1,28 @@
+# What the files in this repository already are, so an editor keeps them that way.
+# Line endings are not here: .gitattributes decides them, per platform.
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.java]
+max_line_length = 120
+
+# Prose and the documents are wrapped at a hundred columns; a table row is not
+[*.md]
+max_line_length = 100
+
+[*.{yml,yaml}]
+indent_size = 2
+
+# Other people's texts, kept as they were published
+[{LICENSE,*-LICENSE.txt}]
+trim_trailing_whitespace = false
+
+# Written by the importer on one line, and written again by the next run
+[wtf-studio/src/main/resources/net/trdlo/wtf/studio/outlines/**]
+insert_final_newline = false

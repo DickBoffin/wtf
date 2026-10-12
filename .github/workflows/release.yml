@@ -1,0 +1,286 @@
+# Native installers, built on each platform because jpackage can only target the one it runs on.
+#
+# Triggered by a v* tag, or by hand from the Actions tab – the manual run is the important one:
+# a packaging change should be provable without inventing a version number for it.
+name: Installers
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to stamp on the installers (digits and dots only)'
+        required: false
+        default: ''
+
+# Read only, but for the one job that publishes
+permissions:
+  contents: read
+
+# One run per tag or branch at a time, and never canceled halfway: a release stopped between its
+# platforms leaves a draft with some of its installers
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # Before any platform builds: a tag whose pom or change log says another version would make
+  # three installers that About contradicts, and notes taken from the wrong section. So would a
+  # version a manual run is given, which is stamped into the poms just as a tag's is.
+  versions:
+    name: Tag, pom and change log agree
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - name: Check the version
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            tools/package/check-version.sh "${GITHUB_REF_NAME}"
+          elif [ -n "$INPUT_VERSION" ]; then
+            tools/package/check-version.sh "$INPUT_VERSION"
+          else
+            tools/package/check-version.sh
+          fi
+
+  # The tests, the enforcer and SpotBugs, as the Build workflow runs them: package.sh skips them,
+  # and an installer is not built from a commit that fails them
+  verify:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test
+        run: mvn -B verify
+
+  package:
+    name: ${{ matrix.label }}
+    needs: [versions, verify]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false        # one platform's toolchain being broken should not hide the others
+      matrix:
+        include:
+          - os: windows-latest
+            label: Windows installer
+            artifact: '*.msi'
+          - os: macos-latest
+            label: macOS disk image
+            artifact: '*.dmg'
+          - os: ubuntu-latest
+            label: Linux package
+            artifact: '*.deb'
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      # jpackage shells out to dpkg-deb and to fakeroot on Linux; the runners have neither
+      # reliably, and the failure it gives without them is not obviously about a missing package.
+      - name: Install the Linux packaging tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot binutils
+
+      # jpackage builds the MSI with the WiX Toolset, which the runner image need not carry.
+      # jpackage 25 takes WiX 4, a .NET tool, and the two extensions it builds with; the version
+      # is named so a new WiX is a change here, not a surprise in a release.
+      - name: Install WiX
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 4.0.6
+          $tools = Join-Path $env:USERPROFILE '.dotnet/tools'
+          $env:PATH = "$tools;$env:PATH"
+          $tools | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          wix extension add --global WixToolset.Util.wixext/4.0.6
+          wix extension add --global WixToolset.UI.wixext/4.0.6
+          wix --version
+
+      # A manual run without a version is a test build, stamped 0.0.<run number> on the
+      # installers. Every one differs from the last: the Windows installer takes its product code
+      # from the version, so two builds of one version are one product to it, and the second
+      # installs nothing. And every one is below any release, which therefore replaces it. The
+      # input is read from the environment, not pasted into the script.
+      - name: Work out the version
+        id: version
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            V="$INPUT_VERSION"
+          elif [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            V="${GITHUB_REF_NAME#v}"
+          else
+            V="0.0.${GITHUB_RUN_NUMBER}"
+          fi
+          if ! [[ "$V" =~ ^[0-9]+(\.[0-9]+)*(-[A-Za-z0-9.]+)?$ ]]; then
+            echo "::error::Not a version: $V"
+            exit 1
+          fi
+          # jpackage refuses a qualifier, so 0.2.0-SNAPSHOT becomes 0.2.0
+          echo "version=${V%%-*}" >> "$GITHUB_OUTPUT"
+          echo "full=$V" >> "$GITHUB_OUTPUT"
+          echo "Packaging version ${V%%-*}"
+
+      # The tag is the version. Between releases the pom says the next one, 0.2.0-SNAPSHOT, and a
+      # release build is stamped with the tag's own, so About in the installed application says
+      # 0.1.0 and not 0.1.0-SNAPSHOT. Nothing is committed back; the change lives in this runner
+      # only. A test build keeps the pom's -SNAPSHOT, which is what About should say for it.
+      - name: Take the version from the tag
+        if: github.ref_type == 'tag' || github.event.inputs.version != ''
+        shell: bash
+        run: mvn -B -q versions:set -DnewVersion="${{ steps.version.outputs.full }}" -DgenerateBackupPoms=false -DprocessAllModules=true
+
+      - name: Build the installer
+        shell: bash
+        run: tools/package/package.sh "${{ steps.version.outputs.version }}"
+
+      # For the comparison below; before the smoke test, which builds them again
+      - name: Upload the jars
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        with:
+          name: jars-${{ runner.os }}
+          path: 'wtf-*/target/wtf-*.jar'
+          if-no-files-found: error
+
+      # Before the smoke test, which builds an app image into the same folder and so clears it
+      - name: Upload the installer
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        with:
+          name: installer-${{ runner.os }}
+          path: target/installers/${{ matrix.artifact }}
+          if-no-files-found: error
+
+      # Proves the packaged runtime starts, rather than only that jpackage exited zero. The
+      # unattended mode exits non-zero when it wrote no picture, so a hang is a failure here and
+      # not a green tick over a broken build. Only on Windows and Linux: the macOS runner has no
+      # window server, and an unsigned .app would need the quarantine flag cleared first.
+      - name: Check that it runs
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          tools/package/package.sh "${{ steps.version.outputs.version }}" app-image
+          "target/installers/WTF/WTF.exe" --screenshot=target/smoke.png
+          test -s target/smoke.png
+
+      - name: Check that it runs
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get install -y xvfb libgtk-3-0
+          tools/package/package.sh "${{ steps.version.outputs.version }}" app-image
+          xvfb-run -a "target/installers/WTF/bin/WTF" --screenshot=target/smoke.png
+          test -s target/smoke.png
+
+      - name: Upload the smoke-test picture
+        if: always() && runner.os != 'macOS'
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        with:
+          name: smoke-${{ runner.os }}
+          path: target/smoke.png
+          if-no-files-found: ignore
+
+  # One commit is the same jars wherever it is built (the reproducible build, and the resources
+  # checked out with LF on every platform by .gitattributes). A difference is a file that took
+  # the platform's line ending or something else of the machine, and it fails here by name.
+  same-jars:
+    name: The same jars on every platform
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+        with:
+          pattern: jars-*
+          path: jars
+
+      - name: Compare them
+        shell: bash
+        run: |
+          cd jars
+          find . -name '*.jar' -exec sha256sum {} + | sort -k2
+          for jar in jars-Linux/*/target/*.jar; do
+            rel=${jar#jars-Linux/}
+            for os in Windows macOS; do
+              if ! cmp -s "$jar" "jars-$os/$rel"; then
+                echo "::error::$rel differs between Linux and $os"
+                failed=1
+              fi
+            done
+          done
+          exit "${failed:-0}"
+
+  release:
+    name: Publish the release
+    needs: [package, same-jars]      # a draft only of installers whose jars agree
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write      # to create the draft release and attach the installers
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+        with:
+          pattern: installer-*
+          path: installers
+          merge-multiple: true
+
+      # The release notes come from CHANGELOG.md, which is also what the application shows under
+      # About – one source, so the two cannot drift. The platform lines are a list, since a single
+      # newline inside a Markdown paragraph does not break it and they would run into one.
+      - name: Take the notes from the change log
+        shell: bash
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          awk -v want="$V" '
+            /^## / { keep = ($2 == want || $2 == "v" want); next }
+            keep   { print }
+          ' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "No CHANGELOG.md entry for $V." > notes.md
+          fi
+          {
+            echo
+            echo "---"
+            echo
+            echo "- **Windows** – run the \`.msi\`. It installs per user, so it needs no administrator. It is"
+            echo "  not signed yet, so SmartScreen may say *Windows protected your PC*: click **More info**, then"
+            echo "  **Run anyway**."
+            echo "- **macOS** – the \`.dmg\` is unsigned: open it, drag the app across, then run"
+            echo "  \`xattr -dr com.apple.quarantine \"/Applications/WTF.app\"\` once."
+            echo "- **Linux** – \`sudo apt install ./wtf_*.deb\`."
+            echo
+            echo "No Java installation is needed; each build carries its own runtime."
+          } >> notes.md
+
+      - name: Publish
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65   # v2.6.2
+        with:
+          files: installers/*
+          body_path: notes.md
+          draft: true          # a human decides when it goes public
+          fail_on_unmatched_files: true

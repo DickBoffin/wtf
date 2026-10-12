@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    An alternative to wtf.svg, for comparison rather than replacement.
+
+    What it keeps: the dark rounded square, the tile grid, the scattered cyan cells. Those are the
+    best idea in the original - they are literally what the application does, and the scatter is
+    the order the first world is actually fetched in.
+
+    What it changes:
+      - The letters are bigger and sit on the grid rather than floating over it, so the mark has
+        one center of gravity instead of two.
+      - One cell is the "not in local cache" placeholder the canvas draws: dashed edge, faint
+        ring. That is the joke the name is making, drawn in the application's own language, and it
+        survives being shrunk in a way that three letters do not.
+      - The F is missing its lower arm, which the grid line supplies. A small visual debt the eye
+        settles by itself, and the kind of thing that makes a logo look drawn rather than typed.
+  -->
+  <rect width="1024" height="1024" rx="160" fill="#0f172a"/>
+
+  <g stroke="#1e293b" stroke-width="14" fill="none">
+    <line x1="256" y1="0" x2="256" y2="1024"/>
+    <line x1="512" y1="0" x2="512" y2="1024"/>
+    <line x1="768" y1="0" x2="768" y2="1024"/>
+    <line x1="0" y1="256" x2="1024" y2="256"/>
+    <line x1="0" y1="512" x2="1024" y2="512"/>
+    <line x1="0" y1="768" x2="1024" y2="768"/>
+  </g>
+
+  <!-- The quadrant spread of the first four tiles the splash fetches -->
+  <rect x="0" y="0" width="256" height="256" fill="#22d3ee" opacity="0.20"/>
+  <rect x="512" y="256" width="256" height="256" fill="#22d3ee" opacity="0.13"/>
+  <rect x="768" y="768" width="256" height="256" fill="#22d3ee" opacity="0.10"/>
+
+  <!-- The one that has not arrived: the placeholder, as the canvas draws it -->
+  <g>
+    <rect x="266" y="522" width="236" height="236" fill="#0b1220"/>
+    <rect x="266" y="522" width="236" height="236" fill="none" stroke="#334155"
+          stroke-width="10" stroke-dasharray="26 22"/>
+    <circle cx="384" cy="640" r="38" fill="none" stroke="#334155" stroke-width="10"/>
+  </g>
+
+  <g fill="#f8fafc" font-family="Arial Black, Helvetica, Impact, sans-serif"
+     font-size="500" font-weight="900" text-anchor="middle" letter-spacing="-40">
+    <text x="512" y="430">WTF</text>
+  </g>
+
+  <!-- The F's missing arm, handed back by the grid -->
+  <rect x="690" y="300" width="150" height="34" fill="#22d3ee" opacity="0.85"/>
+</svg>

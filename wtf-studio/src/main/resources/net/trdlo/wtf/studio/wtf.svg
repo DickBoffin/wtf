@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  
+  <rect width="1024" height="1024" rx="160" fill="#0f172a"></rect>
+  
+  
+  <g stroke="#1e293b" stroke-width="14" fill="none">
+    <line x1="256" y1="0" x2="256" y2="1024"></line>
+    <line x1="512" y1="0" x2="512" y2="1024"></line>
+    <line x1="768" y1="0" x2="768" y2="1024"></line>
+    <line x1="0" y1="256" x2="1024" y2="256"></line>
+    <line x1="0" y1="512" x2="1024" y2="512"></line>
+    <line x1="0" y1="768" x2="1024" y2="768"></line>
+  </g>
+
+  
+  <rect x="0" y="0" width="256" height="256" fill="#22d3ee" opacity="0.20"></rect>
+  <rect x="512" y="256" width="256" height="256" fill="#22d3ee" opacity="0.13"></rect>
+  <rect x="256" y="512" width="256" height="256" fill="#22d3ee" opacity="0.16"></rect>
+  <rect x="768" y="768" width="256" height="256" fill="#22d3ee" opacity="0.10"></rect>
+
+  
+  <text x="512" y="640" font-family="Arial Black, Impact, sans-serif" font-size="460" font-weight="900" text-anchor="middle" fill="#f8fafc" letter-spacing="-32">WTF</text>
+</svg>

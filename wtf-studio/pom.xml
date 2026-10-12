@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.trdlo.wtf</groupId>
+        <artifactId>wtf</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>wtf-studio</artifactId>
+    <name>WTF :: studio</name>
+    <description>The JavaFX application: the map canvas, the toolbar, the dialogs.</description>
+
+    <properties>
+        <app.mainClass>net.trdlo.wtf.studio.WtfApp</app.mainClass>
+        <!-- Overridden by the platform profiles below, which activate on the build's host OS.
+             Declaring the classifier on every JavaFX artifact is deliberate: relying on the
+             transitive profile has left target/libs with no JavaFX jars at all on a macOS CI
+             runner. -->
+        <javafx.classifier>win</javafx.classifier>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.trdlo.wtf</groupId>
+            <artifactId>wtf-compose</artifactId>
+        </dependency>
+
+        <!-- Each JavaFX module the application uses is named here with its classifier, and every
+             other org.openjfx artifact is excluded: the platform jars and atlantafx pull in the
+             classifier-less ones, empty markers that exist only to carry the platform jars, and
+             atlantafx's is JavaFX 23's. Shipped, they put a second javafx.base on the path. -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.classifier}</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.classifier}</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.classifier}</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.classifier}</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome5-pack</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <!-- app.version and friends are baked in at build time and read at startup -->
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <!-- The change log ships as a resource so "What is new" reads the file people
+                 actually edit. A second copy kept in Java would be wrong by the next release. -->
+            <resource>
+                <directory>${project.basedir}/..</directory>
+                <includes>
+                    <include>CHANGELOG.md</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Explicit, so -Djavafx.mainClass is ignored; override with -Dapp.mainClass
+                         to run a scratch diagnostic. -->
+                    <mainClass>${app.mainClass}</mainClass>
+                    <options>
+                        <!-- JavaFX's native libraries, and WTF's own calls into the Windows
+                             Credential Manager. The installer passes the same, naming the unnamed
+                             module where it puts WTF; a developer run should be as quiet as what
+                             ships, or the noise stops being read. -->
+                        <option>--enable-native-access=javafx.graphics,net.trdlo.wtf.studio</option>
+                    </options>
+                </configuration>
+            </plugin>
+
+            <!-- Everything the application needs at run time, in one directory, for jpackage.
+                 Package the whole reactor first (mvn package) so the sibling modules are there. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>collect-runtime</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <!-- The classifier-less JavaFX markers never get this far: the
+                                 exclusions on the dependencies above keep them out. -->
+                            <excludeClassifiers>sources,javadoc</excludeClassifiers>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <!-- The commit this build is made from, for app.properties: two builds of one
+                         commit say the same thing, which a build date never did. The whole hash,
+                         because how long a short one comes out depends on the clone.
+
+                         Asked of git in this module's own folder rather than through
+                         git-commit-id-maven-plugin, which reads a linked worktree's commit off the
+                         main checkout - and changes are built in worktrees before they land. With
+                         no git, or no repository around the source, the property stays empty and
+                         the application says "-". -->
+                    <execution>
+                        <id>commit-for-app-properties</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <exec executable="git" dir="${project.basedir}"
+                                      outputproperty="git.commit" errorproperty="git.commit.error"
+                                      failifexecutionfails="false">
+                                    <arg value="rev-parse"/>
+                                    <arg value="HEAD"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <!-- The application's own jar goes in beside them, so target/libs is the whole
+                         of it. -->
+                    <execution>
+                        <id>app-jar-into-libs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      todir="${project.build.directory}/libs"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- The export step's two presses over a print with nothing in it are tested against
+                 the JDK's own HTTP server, in process, as the downloader's tests are. The tests are
+                 compiled into this module, which does not read jdk.httpserver and should not: only
+                 the tests need it, so only their compilation is given it. Surefire runs them on the
+                 class path, where the JDK's modules are all readable already. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>--add-modules</arg>
+                                <arg>jdk.httpserver</arg>
+                                <arg>--add-reads</arg>
+                                <arg>net.trdlo.wtf.studio=jdk.httpserver</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation><os><family>windows</family></os></activation>
+            <properties><javafx.classifier>win</javafx.classifier></properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation><os><family>mac</family></os></activation>
+            <properties><javafx.classifier>mac</javafx.classifier></properties>
+        </profile>
+        <profile>
+            <id>mac-aarch64</id>
+            <activation><os><family>mac</family><arch>aarch64</arch></os></activation>
+            <properties><javafx.classifier>mac-aarch64</javafx.classifier></properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation><os><family>unix</family><name>Linux</name></os></activation>
+            <properties><javafx.classifier>linux</javafx.classifier></properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,27 @@
+# Line endings, decided by the repository rather than by each machine's core.autocrlf.
+#
+# Text is stored with LF and checked out the way the platform expects, so a Windows checkout has
+# CRLF and a Linux one LF, and the history never records a line-ending change as an edit.
+
+* text=auto
+
+# Run by bash on every platform, which reads a CR as part of the command.
+*.sh text eol=lf
+
+# What goes into a jar has LF on every platform, so that a Windows build and a Linux build of one
+# commit are the same jars: the resources, the filtered ones and the change log the studio shows.
+# The binary rules below still win for the images and the font among them.
+wtf-*/src/main/resources/** text eol=lf
+wtf-*/src/main/filtered-resources/** text eol=lf
+/CHANGELOG.md text eol=lf
+
+# Never touched: a changed byte in an icon or an image is a broken file.
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
+*.pdf binary
+*.ttf binary
+*.jar binary
+# Windows command files: cmd.exe misreads a bare LF in some constructs.
+*.cmd text eol=crlf

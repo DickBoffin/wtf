@@ -1,0 +1,22 @@
+# Maven's output, and tools/package/package.sh's installers under the root target/
+target/
+
+# IntelliJ IDEA: the run configurations, the inspection profile and the encodings are shared;
+# .idea/.gitignore keeps the workspace out, and these are regenerated from the POMs
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iml
+*.iws
+*.ipr
+
+# macOS
+.DS_Store
+
+# Screenshots, state dumps and scratch output – at the root, and in wtf-studio/ when the
+# application runs from there
+temp/
+
+# The class path tools/outlines/OutlineImport.java is run with
+cp.txt

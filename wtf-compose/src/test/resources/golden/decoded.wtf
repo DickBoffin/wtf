@@ -1,0 +1,63 @@
+{
+  "format" : "wtf",
+  "title" : "Decoded",
+  "notes" : "The second fixture of GoldenPdfTest: aerial JPEG tiles copied with a /Decode array inside, decoded for saturation outside, and a few tiles of other kinds, all synthetic.",
+  "saved" : "2026-09-27T00:00:00Z",
+  "source" : {
+    "provider" : "esri",
+    "theme" : "World_Imagery"
+  },
+  "area" : {
+    "kind" : "rectangle",
+    "polygons" : [ [ [ [ 13.8, 50.7 ], [ 16.6, 50.7 ], [ 16.6, 49.42 ], [ 13.8, 49.42 ], [ 13.8, 50.7 ] ] ] ]
+  },
+  "subject" : {
+    "kind" : "outline",
+    "polygons" : [ [ [ [ 14.0, 50.6 ], [ 16.3, 50.4 ], [ 15.6, 49.5 ], [ 14.3, 49.7 ], [ 14.0, 50.6 ] ] ] ]
+  },
+  "refine" : { },
+  "regions" : {
+    "zoom" : 9,
+    "inside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.1,
+        "contrast" : -0.2
+      }
+    },
+    "outside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 0.6,
+        "lightness" : 0.25,
+        "contrast" : -0.3
+      }
+    },
+    "boundaryStroke" : {
+      "drawn" : true,
+      "widthMm" : 0.6,
+      "color" : "#3A7BD5"
+    }
+  },
+  "print" : {
+    "sizeMode" : "FIT_WIDTH",
+    "widthMm" : 260.0,
+    "backgroundColor" : "#F4F1E8",
+    "exactArea" : true
+  },
+  "medium" : {
+    "kind" : "SHEET",
+    "sheetWidthMm" : 210.0,
+    "sheetHeightMm" : 297.0,
+    "orientation" : "PORTRAIT",
+    "overlapMm" : 25.0,
+    "edgeMm" : 5.0
+  },
+  "export" : {
+    "formats" : [ "PDF" ],
+    "grouping" : "SINGLE_DOCUMENT",
+    "baseName" : "decoded",
+    "credit" : true
+  }
+}

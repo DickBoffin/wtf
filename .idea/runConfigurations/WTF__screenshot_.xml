@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WtfApp (screenshot)" type="Application" factoryName="Application">
+    <!-- The unattended run: starts, lets the canvas settle, writes a PNG, exits. Exits non-zero
+         when nothing was written, so a green run really means a picture exists. -->
+    <option name="MAIN_CLASS_NAME" value="net.trdlo.wtf.studio.WtfApp" />
+    <module name="wtf-studio.main" />
+    <option name="VM_PARAMETERS" value="--enable-native-access=javafx.graphics,net.trdlo.wtf.studio" />
+    <option name="PROGRAM_PARAMETERS" value="--screenshot=temp/wtf-studio.png" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

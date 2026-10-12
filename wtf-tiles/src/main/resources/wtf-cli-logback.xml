@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The log of the command lines, TilesCli and ComposeCli, which name this file when nobody named
+    another (ConsoleOutput.configureLogging). The studio has its own, logback.xml.
+
+    To stderr, so that it never mixes with what a command answers on stdout. WARN by default: what
+    went well the command says itself. -Dwtf.log.level=DEBUG says the rest.
+-->
+<configuration>
+    <property name="LEVEL" value="${wtf.log.level:-WARN}"/>
+
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <encoder>
+            <pattern>%-5level %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- PDFBox talks a lot at DEBUG and says nothing about the print -->
+    <logger name="org.apache.pdfbox" level="WARN"/>
+    <logger name="org.apache.fontbox" level="WARN"/>
+    <logger name="jdk.internal.httpclient" level="WARN"/>
+
+    <root level="${LEVEL}">
+        <appender-ref ref="STDERR"/>
+    </root>
+</configuration>

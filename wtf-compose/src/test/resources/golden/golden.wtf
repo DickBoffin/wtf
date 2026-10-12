@@ -1,0 +1,61 @@
+{
+  "format" : "wtf",
+  "title" : "Golden",
+  "notes" : "The fixture of GoldenPdfTest: the tiles beside it are synthetic, one per tile this plans.",
+  "saved" : "2026-09-25T00:00:00Z",
+  "source" : {
+    "provider" : "osm",
+    "theme" : "standard"
+  },
+  "area" : {
+    "kind" : "rectangle",
+    "polygons" : [ [ [ [ 12.0, 51.1 ], [ 19.0, 51.1 ], [ 19.0, 48.5 ], [ 12.0, 48.5 ], [ 12.0, 51.1 ] ] ] ]
+  },
+  "subject" : {
+    "kind" : "outline",
+    "polygons" : [ [ [ [ 13.5, 50.5 ], [ 16.5, 50.8 ], [ 15.0, 49.2 ], [ 13.5, 50.5 ] ] ] ]
+  },
+  "refine" : { },
+  "regions" : {
+    "zoom" : 7,
+    "inside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.0,
+        "contrast" : 0.0
+      }
+    },
+    "outside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 0.0,
+        "lightness" : 0.35,
+        "contrast" : -0.45
+      }
+    },
+    "boundaryStroke" : {
+      "drawn" : true,
+      "widthMm" : 0.8,
+      "color" : "#FFA94D"
+    }
+  },
+  "print" : {
+    "sizeMode" : "FIT_WIDTH",
+    "widthMm" : 300.0,
+    "backgroundColor" : "#FFFFFF"
+  },
+  "medium" : {
+    "kind" : "ROLL",
+    "rollWidthMm" : 180.0,
+    "stripAxis" : "VERTICAL",
+    "overlapMm" : 20.0,
+    "edgeMm" : 5.0
+  },
+  "export" : {
+    "formats" : [ "PDF" ],
+    "grouping" : "SINGLE_DOCUMENT",
+    "baseName" : "golden",
+    "credit" : true
+  }
+}

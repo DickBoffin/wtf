@@ -1,0 +1,305 @@
+/* WTF. AtlantaFX supplies the controls; this is only what the map window adds.
+   Every color here is one of AtlantaFX's own tokens, never a literal, so the light and dark
+   themes both work without a second stylesheet. */
+
+.status-bar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1 0 0 0;
+    -fx-font-size: 11px;
+}
+
+.status-bar .label {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.status-print {
+    -fx-text-fill: -color-fg-default !important;
+}
+
+.help-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.dialog-heading {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* AtlantaFX caps every dialog pane at 600 pixels wide, which is right for an alert's text and
+   wrong for a dialog that has a size of its own and may be made wider. A value set in code does
+   not hold against the theme's; a rule here does. */
+.dialog-pane.resizable-dialog {
+    -fx-max-width: 100000px;
+}
+
+/* ---- the five-step rail ------------------------------------------------------------------ */
+
+.step-rail {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.step-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-padding: 7 8 7 8;
+}
+
+.step-button:hover {
+    -fx-background-color: -color-bg-inset;
+}
+
+.step-button:selected {
+    -fx-background-color: -color-accent-subtle;
+}
+
+.step-button:selected .step-title {
+    -fx-text-fill: -color-accent-fg;
+    -fx-font-weight: bold;
+}
+
+/* The step number: a small circle, so the rail reads as an ordered list without a wizard's
+   "you may not proceed" implication. */
+.step-number {
+    -fx-min-width: 18px;
+    -fx-min-height: 18px;
+    -fx-alignment: center;
+    -fx-background-color: -color-bg-inset;
+    -fx-background-radius: 9;
+    -fx-font-size: 10px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.step-button:selected .step-number {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-text-fill: -color-fg-emphasis;
+}
+
+.step-icon {
+    -fx-icon-color: -color-fg-muted;
+    -fx-icon-size: 13;
+}
+
+.step-button:selected .step-icon {
+    -fx-icon-color: -color-accent-fg;
+}
+
+.step-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-default;
+}
+
+/* The live answer under each step's name - the reason the rail is worth its width. */
+.step-summary {
+    -fx-font-size: 10px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+/* ---- the Start page ----------------------------------------------------------------------- */
+
+/* A step's name as the rail has it, beside what the step decides. */
+.start-step-name {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+/* An example to open: a button as wide as the page, its name where a line of text starts. */
+.button.example-button {
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+}
+
+/* ---- the panel beside the rail ------------------------------------------------------------ */
+
+.panel-host {
+    -fx-background-color: -color-bg-default;
+}
+
+.panel-host > .viewport {
+    -fx-background-color: -color-bg-default;
+}
+
+.step-panel {
+    -fx-background-color: -color-bg-default;
+}
+
+.step-heading {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.step-label {
+    -fx-font-size: 12px;
+    -fx-fill: -color-fg-default;
+    -fx-text-fill: -color-fg-default;
+}
+
+/* The zoom table's headings: smaller than the theme's, so that "Přiblížení" and "Názvy (mm)" both
+   fit a table as narrow as the step. */
+.zoom-table .column-header .label {
+    -fx-font-size: 11px;
+    -fx-padding: 0 3 0 3;
+}
+
+.zoom-table .column-header .zoom-heading {
+    -fx-padding: 0;
+}
+
+.step-hint {
+    -fx-font-size: 10.5px;
+    -fx-fill: -color-fg-muted;
+    -fx-text-fill: -color-fg-muted;
+}
+
+/* The "?" beside a control, with the rest of what there is to say about it in its tooltip:
+   muted, so that it reads as an offer rather than as one more control. */
+.button.help-icon {
+    -fx-padding: 2 3 2 3;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.button.help-icon .help-icon-glyph {
+    -fx-icon-color: -color-fg-muted;
+    -fx-icon-size: 13;
+}
+
+.button.help-icon:hover .help-icon-glyph,
+.button.help-icon:focused .help-icon-glyph {
+    -fx-icon-color: -color-accent-fg;
+}
+
+/* A number field that cannot be parsed in the display locale. Not an error dialog - the field
+   is half-typed most of the time - just a quiet outline until it makes sense again. */
+.text-field:bad-number {
+    -fx-border-color: -color-danger-emphasis;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.sheet-diagram {
+    -fx-font-family: monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.export-log {
+    -fx-font-family: monospace;
+    -fx-font-size: 10px;
+}
+
+/* ---- the splash ---------------------------------------------------------------------------- */
+
+.splash {
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1;
+}
+
+.splash-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.splash-version,
+.splash-status {
+    -fx-font-size: 11px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+/* ---- rendered Markdown --------------------------------------------------------------------
+   Nodes rather than a WebView, so everything here follows the theme's own color tokens. */
+
+.md-scroll,
+.md-scroll > .viewport,
+.md {
+    -fx-background-color: -color-bg-default;
+}
+
+.md-text {
+    -fx-fill: -color-fg-default;
+    -fx-font-size: 12px;
+}
+
+.md-bold {
+    -fx-font-weight: bold;
+}
+
+.md-italic {
+    -fx-font-style: italic;
+}
+
+/* The one place a fixed-width font belongs: an inline literal, where the characters matter. */
+.md-code {
+    -fx-font-family: "Consolas", "Menlo", "DejaVu Sans Mono", monospace;
+    -fx-font-size: 11.5px;
+    -fx-fill: -color-accent-fg;
+}
+
+.md-link {
+    -fx-text-fill: -color-accent-fg;
+    -fx-font-size: 12px;
+}
+
+.md-bullet {
+    -fx-text-fill: -color-fg-muted;
+    -fx-font-size: 12px;
+}
+
+.md-heading {
+    -fx-text-fill: -color-fg-default;
+    -fx-font-weight: bold;
+}
+
+.md-h1 { -fx-font-size: 17px; }
+.md-h2 { -fx-font-size: 14.5px; }
+.md-h3 { -fx-font-size: 12.5px; }
+
+/* A table drawn with rules, not with padded monospace text. */
+.md-table {
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1 0 0 1;
+}
+
+.md-table > .md-th,
+.md-table > .md-td {
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0 1 1 0;
+}
+
+.md-table > .md-th {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.md-table > .md-th .md-text {
+    -fx-font-weight: bold;
+}
+
+.provider-entry {
+    -fx-border-color: -color-border-muted;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* The level headings in the outline picker: a section title, not a thing to pick. Disabled cells
+   are faded by default, which made them look broken rather than like a heading, so the opacity is
+   put back. */
+.list-cell.outline-heading {
+    -fx-font-weight: bold;
+    -fx-opacity: 1;
+    -fx-padding: 8 4 2 4;
+    -fx-background-color: transparent;
+}
+
+/* Save as: a small pen over the diskette's corner, cut out of it by an outline in the toolbar's own color */
+.save-as-pen {
+    -fx-icon-size: 9;
+    -fx-stroke: -color-bg-subtle;
+    -fx-stroke-width: 2;
+    -fx-stroke-type: outside;
+    -fx-translate-x: 3;
+    -fx-translate-y: 3;
+}

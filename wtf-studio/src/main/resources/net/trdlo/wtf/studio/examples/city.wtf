@@ -1,0 +1,71 @@
+{
+  "format" : "wtf",
+  "saved" : "2026-10-10T09:19:59.657147300Z",
+  "source" : {
+    "provider" : "ign-fr",
+    "theme" : "plan-ign",
+    "lang" : "en"
+  },
+  "area" : {
+    "kind" : "rectangle",
+    "source" : "subject",
+    "polygons" : [ [ [ [ 2.213146206056473, 48.806846888250085 ], [ 2.213146206056473, 48.910203111749915 ], [ 2.4870737939435275, 48.910203111749915 ], [ 2.4870737939435275, 48.806846888250085 ], [ 2.213146206056473, 48.806846888250085 ] ] ] ]
+  },
+  "subject" : {
+    "source" : "library:ne1:FRA-5333:Paris",
+    "polygons" : [ [ [ [ 2.23535, 48.83381 ], [ 2.2268, 48.8528 ], [ 2.23315, 48.86908 ], [ 2.24843, 48.88625 ], [ 2.2666, 48.90114 ], [ 2.37661, 48.90122 ], [ 2.39156, 48.89702 ], [ 2.41421, 48.87653 ], [ 2.42908, 48.86906 ], [ 2.47342, 48.8592 ], [ 2.46521, 48.8354 ], [ 2.45725, 48.8213 ], [ 2.44337, 48.81583 ], [ 2.33197, 48.81712 ], [ 2.2548, 48.8385 ], [ 2.23535, 48.83381 ] ] ] ]
+  },
+  "refine" : {
+    "simplify" : "BOUNDING_BOX",
+    "bufferValue" : 1000.0
+  },
+  "regions" : {
+    "zoom" : 15,
+    "inside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.0,
+        "contrast" : 0.0
+      }
+    },
+    "outside" : {
+      "drawn" : true,
+      "effect" : {
+        "saturation" : 1.0,
+        "lightness" : 0.0,
+        "contrast" : 0.0
+      }
+    },
+    "boundaryStroke" : {
+      "drawn" : false,
+      "widthMm" : 1.0,
+      "color" : "#FFA94D"
+    }
+  },
+  "print" : {
+    "sizeMode" : "FIT_WIDTH",
+    "widthMm" : 841.0,
+    "backgroundColor" : "#FFFFFF",
+    "setAside" : {
+      "sizeMode" : "FIT_WIDTH",
+      "widthMm" : 210.0
+    }
+  },
+  "medium" : {
+    "kind" : "SHEET",
+    "sheetWidthMm" : 210.0,
+    "sheetHeightMm" : 297.0,
+    "orientation" : "LANDSCAPE",
+    "overlapMm" : 20.0,
+    "edgeMm" : 5.0,
+    "sheetsAcross" : 3
+  },
+  "export" : {
+    "formats" : [ "PDF" ],
+    "grouping" : "SINGLE_DOCUMENT",
+    "baseName" : "paris",
+    "missingTiles" : "REFUSE",
+    "credit" : true
+  }
+}

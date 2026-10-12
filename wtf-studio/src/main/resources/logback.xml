@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The log: to the console, and to a file a user can attach to a bug report.
+
+    The file is wtf.log in the folder LogDir works out (%LOCALAPPDATA%\WTF\logs on Windows), one per
+    day, a week of them kept. INFO by default; -Dwtf.log.level=DEBUG raises both, so somebody can be
+    asked for a detailed log without a new build.
+-->
+<configuration>
+    <define name="LOG_DIR" class="net.trdlo.wtf.studio.LogDir"/>
+    <property name="LEVEL" value="${wtf.log.level:-INFO}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/wtf.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/wtf.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- PDFBox and the HTTP client talk a lot at DEBUG and say nothing a user's report needs -->
+    <logger name="org.apache.pdfbox" level="WARN"/>
+    <logger name="org.apache.fontbox" level="WARN"/>
+    <logger name="jdk.internal.httpclient" level="WARN"/>
+    <!-- On loading, PDFBox looks for a way to unmap memory-mapped files and logs an exception when
+         the runtime has none, which WTF's runtimes do not. WTF never has it map a file. -->
+    <logger name="org.apache.pdfbox.io.IOUtils" level="OFF"/>
+
+    <root level="${LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

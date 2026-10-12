@@ -1,0 +1,10 @@
+# The modules the installed runtime is linked from, JDK and JavaFX alike, as jdeps finds the jars
+# using them. Written by `tools/package/runtime-modules.sh --write` and checked by its --check, in
+# CI on every push and in package.sh. package.sh adds jdk.localedata, which jdeps cannot see.
+java.base
+java.naming
+java.net.http
+java.prefs
+java.sql
+javafx.controls
+javafx.swing
