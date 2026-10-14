@@ -58,7 +58,7 @@
              (fixed in 2.22.2). Bump this property, never an individual Jackson artifact - the
              BOM below keeps databind, core and annotations on the same version, which is how
              one of them got a version nobody chose in the first place. -->
-        <jackson.version>2.22.2</jackson.version>
+        <jackson.version>2.22.3</jackson.version>
         <junit.version>5.14.0</junit.version>
         <pdfbox.version>3.0.5</pdfbox.version>
     </properties>
