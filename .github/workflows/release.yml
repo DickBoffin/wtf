@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Check the version
         shell: bash
@@ -55,10 +55,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6   # v6.0.1
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -87,10 +87,10 @@ jobs:
             artifact: '*.deb'
 
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6   # v6.0.1
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -159,7 +159,7 @@ jobs:
 
       # For the comparison below; before the smoke test, which builds them again
       - name: Upload the jars
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: jars-${{ runner.os }}
           path: 'wtf-*/target/wtf-*.jar'
@@ -167,7 +167,7 @@ jobs:
 
       # Before the smoke test, which builds an app image into the same folder and so clears it
       - name: Upload the installer
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: installer-${{ runner.os }}
           path: target/installers/${{ matrix.artifact }}
@@ -196,7 +196,7 @@ jobs:
 
       - name: Upload the smoke-test picture
         if: always() && runner.os != 'macOS'
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: smoke-${{ runner.os }}
           path: target/smoke.png
@@ -211,7 +211,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333   # v8.0.2
         with:
           pattern: jars-*
           path: jars
@@ -241,9 +241,9 @@ jobs:
     permissions:
       contents: write      # to create the draft release and attach the installers
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333   # v8.0.2
         with:
           pattern: installer-*
           path: installers
@@ -278,7 +278,7 @@ jobs:
           } >> notes.md
 
       - name: Publish
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65   # v2.6.2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64   # v3.0.3
         with:
           files: installers/*
           body_path: notes.md
