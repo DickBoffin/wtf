@@ -1,6 +1,6 @@
 # Change log
 
-## 0.1.1 – unreleased
+## 0.1.1 – 2026-10-19
 
 - **The macOS disk image is named after the version WTF shows**, not the bundle number macOS
   requires inside it.
