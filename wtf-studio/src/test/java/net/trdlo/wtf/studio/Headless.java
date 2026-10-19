@@ -72,7 +72,7 @@ public final class Headless {
             up.get(30, TimeUnit.SECONDS);
             Platform.setImplicitExit(false);
             onFx(() -> {
-                WtfApp.applyTheme(true);
+                WtfApp.applyTheme(Look.PRIMER, true);
                 final Label text = new Label("x");
                 text.setEffect(new ColorAdjust());
                 new Scene(new StackPane(text)).snapshot(null);

@@ -44,9 +44,7 @@ public class StudioDialog<R> extends Dialog<R> {
 
     /** Puts the studio's stylesheet on a dialog's pane: the one way any dialog or alert gets it. */
     public static void style(final @NotNull DialogPane pane) {
-        if (!pane.getStylesheets().contains(Windows.STYLESHEET)) {
-            pane.getStylesheets().add(Windows.STYLESHEET);
-        }
+        Windows.style(pane.getStylesheets());
     }
 
     /** What a dialog or an alert opened from this one belongs to: this one, not the window under it. */

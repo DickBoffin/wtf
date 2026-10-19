@@ -7,6 +7,9 @@
 - **A new provider's maps table shows its rows whole**: its header covered half of the first.
 - **A header value without the key token says where the key goes instead** – under Providers and
   keys, never in the provider itself.
+- **A choice of looks.** Settings → Display chooses Primer, GitHub's, which is now the default;
+  Cupertino, after macOS; or Nord, the look until now – each light or dark. Dracula is dark only,
+  and JavaFX's own Modena and Caspian light only.
 - **JavaFX 27**, with AtlantaFX 3 and the libraries' newest releases.
 
 ## 0.1.0 – 2026-10-12

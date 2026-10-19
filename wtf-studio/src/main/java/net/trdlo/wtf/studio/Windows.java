@@ -1,11 +1,14 @@
 package net.trdlo.wtf.studio;
 
 import javafx.scene.Scene;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,6 +26,13 @@ public final class Windows {
     /** The studio's stylesheet: the one lookup of it, which the stages and the dialogs share. */
     static final String STYLESHEET =
             Objects.requireNonNull(Windows.class.getResource("studio.css")).toExternalForm();
+
+    /** AtlantaFX's color tokens for JavaFX's own stylesheets, beside the studio's while one is the look. */
+    static final String JAVAFX_COLORS =
+            Objects.requireNonNull(Windows.class.getResource("javafx-colors.css")).toExternalForm();
+
+    /** Whether the look is one of JavaFX's own, which {@link #JAVAFX_COLORS} goes with. */
+    private static boolean javafxColors;
 
     /** Every size, so the window manager and the task bar each pick the one they want. */
     private static final int[] ICON_SIZES = {16, 24, 32, 48, 64, 128, 256, 512};
@@ -70,8 +80,40 @@ public final class Windows {
 
     /** Puts the studio's stylesheet on a scene, once. */
     static void style(final @NotNull Scene scene) {
-        if (!scene.getStylesheets().contains(STYLESHEET)) {
-            scene.getStylesheets().add(STYLESHEET);
+        style(scene.getStylesheets());
+    }
+
+    /**
+     * The studio's stylesheet in a scene's or a dialog pane's list, once, and before it the color
+     * tokens for JavaFX's own stylesheets while one of them is the look.
+     */
+    static void style(final @NotNull List<String> sheets) {
+        sheets.remove(JAVAFX_COLORS);
+        if (!sheets.contains(STYLESHEET)) {
+            sheets.add(STYLESHEET);
+        }
+        if (javafxColors) {
+            sheets.add(sheets.indexOf(STYLESHEET), JAVAFX_COLORS);
+        }
+    }
+
+    /**
+     * Whether the look is one of JavaFX's own stylesheets, for every window open now and every one
+     * styled from now on: each list that has the studio's stylesheet gets the colors or loses them.
+     */
+    static void useJavafxColors(final boolean on) {
+        javafxColors = on;
+        for (final Window window : List.copyOf(Window.getWindows())) {
+            final Scene scene = window.getScene();
+            if (scene == null) {
+                continue;
+            }
+            if (scene.getStylesheets().contains(STYLESHEET)) {
+                style(scene.getStylesheets());
+            }
+            if (scene.getRoot() instanceof final DialogPane pane && pane.getStylesheets().contains(STYLESHEET)) {
+                style(pane.getStylesheets());
+            }
         }
     }
 

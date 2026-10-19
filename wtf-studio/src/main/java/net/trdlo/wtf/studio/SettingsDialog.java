@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.trdlo.wtf.tiles.TileCache;
@@ -131,9 +132,40 @@ public final class SettingsDialog extends StudioDialog<Void> {
         final CheckBox dark = new CheckBox(I18n.get("settings.display.theme"));
         dark.setTooltip(new Tooltip(I18n.get("settings.display.theme.tip")));
         dark.setSelected(prefs.get(Prefs.DARK_THEME));
+        final ComboBox<Look> look = new ComboBox<>();
+        look.getItems().setAll(Look.values());
+        look.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(final Look l) {
+                return l == null ? "" : switch (l) {
+                    case PRIMER -> I18n.get("settings.display.look.primer");
+                    case CUPERTINO -> I18n.get("settings.display.look.cupertino");
+                    case NORD -> I18n.get("settings.display.look.nord");
+                    case DRACULA -> I18n.get("settings.display.look.dracula");
+                    case MODENA -> I18n.get("settings.display.look.modena");
+                    case CASPIAN -> I18n.get("settings.display.look.caspian");
+                };
+            }
+
+            @Override
+            public Look fromString(final String text) {
+                return null;
+            }
+        });
+        look.setValue(Look.named(prefs.get(Prefs.LOOK)));
+        showVariant(dark, look.getValue());
+        // Applied at once, both of them: a look is chosen by seeing it. A look with one variant
+        // shows it in the switch, which it locks, and keeps the choice for the looks with two.
+        look.valueProperty().addListener((o, a, b) -> {
+            prefs.put(Prefs.LOOK, b.name());
+            showVariant(dark, b);
+            WtfApp.applyTheme(b, prefs.get(Prefs.DARK_THEME));
+        });
         dark.selectedProperty().addListener((o, a, b) -> {
-            prefs.put(Prefs.DARK_THEME, b);
-            WtfApp.applyTheme(b);
+            if (!dark.isDisabled()) {
+                prefs.put(Prefs.DARK_THEME, b);
+                WtfApp.applyTheme(look.getValue(), b);
+            }
         });
 
         // The language, in its own name: somebody looking for their language may not read the
@@ -153,11 +185,19 @@ public final class SettingsDialog extends StudioDialog<Void> {
                 prefs.put(Prefs.LANGUAGE, i.intValue() <= 0 ? ""
                         : I18n.LANGUAGES.get(i.intValue() - 1).toLanguageTag()));
 
-        return new VBox(8, dark,
+        return new VBox(8,
+                Forms.labeled("settings.display.look", look),
+                dark,
                 Forms.labeled("settings.display.language", language),
                 note(I18n.get("settings.display.language.note")),
                 Forms.labeled("settings.display.units", unitsChoice()),
                 note(I18n.get("settings.display.units.note")));
+    }
+
+    /** The dark switch for a look: the choice kept for one with both variants, locked for one without. */
+    private void showVariant(final @NotNull CheckBox dark, final @NotNull Look look) {
+        dark.setDisable(!look.hasLight() || !look.hasDark());
+        dark.setSelected(look.dark(prefs.get(Prefs.DARK_THEME)));
     }
 
     /**

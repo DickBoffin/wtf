@@ -1,0 +1,18 @@
+/* AtlantaFX's color tokens, which studio.css uses, for JavaFX's own Modena and Caspian, which do
+   not have them. Each is one of the colors both define, or a shade of one, so it follows whichever
+   of the two is in use. Only on the scenes while one of them is the look (Windows). */
+
+.root {
+    -color-fg-default: -fx-text-background-color;
+    -color-fg-muted: derive(-fx-text-background-color, 45%);
+    -color-fg-emphasis: -fx-selection-bar-text;
+    -color-bg-default: -fx-background;
+    -color-bg-subtle: derive(-fx-background, -4%);
+    -color-bg-inset: -fx-control-inner-background;
+    -color-border-default: -fx-box-border;
+    -color-border-muted: derive(-fx-box-border, 40%);
+    -color-accent-fg: -fx-accent;
+    -color-accent-emphasis: -fx-accent;
+    -color-accent-subtle: derive(-fx-accent, 75%);
+    -color-danger-emphasis: #cf222e;
+}

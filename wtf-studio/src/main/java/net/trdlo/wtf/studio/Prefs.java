@@ -28,6 +28,8 @@ public final class Prefs {
     /** How many tiles are fetched at once; the downloader's own default until Settings says. */
     public static final Count DOWNLOAD_THREADS = new Count("download.threads",
             net.trdlo.wtf.tiles.TileDownloader.DEFAULT_CONCURRENCY);
+    /** The interface's {@link Look}, by name; absent is Primer. */
+    public static final String LOOK = "display.look";
     public static final Flag DARK_THEME = new Flag("display.dark", true);
     public static final String LANGUAGE = "display.language";
     /** Lengths on paper, {@code mm} or {@code inch}; absent means what the machine's country uses. */

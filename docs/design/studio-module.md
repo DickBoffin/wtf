@@ -1,6 +1,7 @@
 # `wtf-studio` – the application
 
-JavaFX 26, AtlantaFX (Nord, light or dark), Ikonli FontAwesome 5, Java 25, one JPMS module. No
+JavaFX 27, AtlantaFX (Primer, Cupertino or Nord, light or dark; Dracula, dark) or JavaFX's own
+Modena or Caspian (light), Ikonli FontAwesome 5, Java 25, one JPMS module. No
 FXML – every window is built in code by the class that owns it – and no ControlsFX.
 
 ---
@@ -389,8 +390,8 @@ unexpected, however well worded.
 ## 8. Settings and About
 
 **Settings** (`SettingsDialog`): **Tile cache** – where (Choose..., Use the default, Open folder),
-tiles and bytes held; **Display** – dark theme, interface language, lengths on paper, the last two at
-the next start; **Downloading** – concurrent requests (six); **Startup** – splash, update check, what
+tiles and bytes held; **Display** – the look and whether it is dark, interface language, lengths on
+paper, the last two at the next start; **Downloading** – concurrent requests (six); **Startup** – splash, update check, what
 is new after an update. The marks for putting the sheets together (`PrintingPrefs`) are set in step 5.
 
 **About** (`AboutDialog`): version and authors, *Check for updates now*; **What is new**, the

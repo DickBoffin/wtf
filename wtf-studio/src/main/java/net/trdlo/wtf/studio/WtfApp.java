@@ -1,7 +1,5 @@
 package net.trdlo.wtf.studio;
 
-import atlantafx.base.theme.NordDark;
-import atlantafx.base.theme.NordLight;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -62,9 +60,16 @@ public final class WtfApp extends Application {
         hostServices = services;
     }
 
-    public static void applyTheme(final boolean dark) {
-        Application.setUserAgentStylesheet(
-                (dark ? new NordDark() : new NordLight()).getUserAgentStylesheet());
+    /**
+     * The look, dark if it has a dark variant and that is wanted, or if it has no light one.
+     * <p>
+     * Between an AtlantaFX look and one of JavaFX's own, JavaFX may restyle part of a window
+     * between the two changes below, and log a few CSS warnings about colors it could not
+     * resolve. The window settles on the new look at once; the warnings are known and harmless.
+     */
+    public static void applyTheme(final @NotNull Look look, final boolean dark) {
+        Application.setUserAgentStylesheet(look.stylesheet(dark));
+        Windows.useJavafxColors(look.isJavafx());
     }
 
     /**
@@ -104,7 +109,7 @@ public final class WtfApp extends Application {
         I18n.useLanguage(language != null ? language : prefs.get(Prefs.LANGUAGE));
         final String units = BatchMode.unitsOf(getParameters());
         Units.use(units != null ? units : prefs.get(Prefs.UNITS));
-        applyTheme(prefs.get(Prefs.DARK_THEME));
+        applyTheme(Look.named(prefs.get(Prefs.LOOK)), prefs.get(Prefs.DARK_THEME));
 
         // The splash capture is the one unattended mode that wants the splash
         if (BatchMode.isSplashRequested(getParameters())) {
