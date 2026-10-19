@@ -1,5 +1,7 @@
 package net.trdlo.wtf.studio;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -278,11 +280,18 @@ public final class ProviderEditor extends StudioDialog<Provider> {
         final TableView<ThemeRow> table = new TableView<>(themes);
         table.setEditable(true);
         // As tall as it has as rows. A scroll pane inside a scroll pane means two scrollbars
-        // for one list, and the wheel lands on whichever one the pointer happens to be over.
+        // for one list, and the wheel lands on whichever one the pointer happens to be over. The
+        // header is measured, not assumed: the theme's font makes it taller than a row.
         final double rowHeight = 28;
         table.setFixedCellSize(rowHeight);
+        final DoubleProperty headerHeight = new SimpleDoubleProperty(rowHeight);
+        table.skinProperty().addListener((o, was, skin) -> {
+            if (table.lookup(".column-header-background") instanceof Region header) {
+                headerHeight.bind(header.heightProperty());
+            }
+        });
         table.prefHeightProperty().bind(javafx.beans.binding.Bindings
-                .size(themes).multiply(rowHeight).add(rowHeight + 2));
+                .size(themes).multiply(rowHeight).add(headerHeight).add(2));
         table.setMinHeight(Region.USE_PREF_SIZE);
         table.setMaxHeight(Region.USE_PREF_SIZE);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);

@@ -132,8 +132,9 @@ class EngineTextTest {
         I18n.setLocale(Locale.forLanguageTag("cs"));
         final Refusal r = new Refusal(ComposeReason.OVERLAP_TOO_WIDE, 12.5, 10.0);
         assertEquals("An overlap of 12.5 mm on a 10.0 mm sheet has no solution", r.getMessage());
-        assertEquals("The header's value has no {key}, so the key would never be sent. Leave it empty "
-                + "to send the key alone.", new Refusal(ProviderReason.HEADER_VALUE_WITHOUT_KEY).getMessage());
+        assertEquals("The header's value has no {key}, so the key would never be sent. The key itself "
+                + "does not go in it – WTF keeps it apart, under Providers and keys. Leave the value "
+                + "empty to send the key alone.", new Refusal(ProviderReason.HEADER_VALUE_WITHOUT_KEY).getMessage());
     }
 
     /** The error dialog says it the same way, from wherever in the cause chain it comes. */

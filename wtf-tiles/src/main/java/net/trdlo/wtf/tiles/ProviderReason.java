@@ -17,7 +17,8 @@ public enum ProviderReason implements Refusal.Reason {
             + "and not a name Windows keeps for a device, such as con, nul or aux."),
     HEADER_NAME_MISSING("A key sent in a header needs the header''s name"),
     HEADER_VALUE_WITHOUT_KEY("The header''s value has no '{key}', so the key would never be sent. "
-            + "Leave it empty to send the key alone."),
+            + "The key itself does not go in it – WTF keeps it apart, under Providers and keys. "
+            + "Leave the value empty to send the key alone."),
     NAME_MISSING("A provider needs a name to show in the list"),
     ATTRIBUTION_MISSING("A provider needs an attribution. Most licenses require the credit to appear "
             + "with anything printed from the imagery."),

@@ -4,6 +4,9 @@
 
 - **The macOS disk image is named after the version WTF shows**, not the bundle number macOS
   requires inside it.
+- **A new provider's maps table shows its rows whole**: its header covered half of the first.
+- **A header value without the key token says where the key goes instead** – under Providers and
+  keys, never in the provider itself.
 
 ## 0.1.0 – 2026-10-12
 
