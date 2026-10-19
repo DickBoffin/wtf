@@ -20,3 +20,6 @@ temp/
 
 # The class path tools/outlines/OutlineImport.java is run with
 cp.txt
+
+# The IDE's own MCP server, on this machine only
+.mcp.json

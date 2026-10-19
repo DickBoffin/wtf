@@ -217,7 +217,7 @@ installer lands in `target/installers`.
 
 ## Releasing
 
-The tag is the version. Between releases the pom names the next one (`0.1.1-SNAPSHOT`); the workflow
+The tag is the version. Between releases the pom names the next one (`0.2.0-SNAPSHOT`); the workflow
 stamps the tag's version into the build, so the installers and About both say `0.1.0`.
 
 1. In `CHANGELOG.md`, replace the newest section's `unreleased` by the date – `## 0.1.0 –

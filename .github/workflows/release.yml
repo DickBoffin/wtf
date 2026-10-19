@@ -144,7 +144,7 @@ jobs:
           echo "full=$V" >> "$GITHUB_OUTPUT"
           echo "Packaging version ${V%%-*}"
 
-      # The tag is the version. Between releases the pom says the next one, 0.1.1-SNAPSHOT, and a
+      # The tag is the version. Between releases the pom says the next one, 0.2.0-SNAPSHOT, and a
       # release build is stamped with the tag's own, so About in the installed application says
       # 0.1.0 and not 0.1.0-SNAPSHOT. Nothing is committed back; the change lives in this runner
       # only. A test build keeps the pom's -SNAPSHOT, which is what About should say for it.
