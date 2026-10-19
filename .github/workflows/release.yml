@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Check the version
         shell: bash
@@ -55,10 +55,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad   # v6.1.0
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -87,10 +87,10 @@ jobs:
             artifact: '*.deb'
 
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad   # v6.1.0
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -144,7 +144,7 @@ jobs:
           echo "full=$V" >> "$GITHUB_OUTPUT"
           echo "Packaging version ${V%%-*}"
 
-      # The tag is the version. Between releases the pom says the next one, 0.2.0-SNAPSHOT, and a
+      # The tag is the version. Between releases the pom says the next one, 0.1.1-SNAPSHOT, and a
       # release build is stamped with the tag's own, so About in the installed application says
       # 0.1.0 and not 0.1.0-SNAPSHOT. Nothing is committed back; the change lives in this runner
       # only. A test build keeps the pom's -SNAPSHOT, which is what About should say for it.
@@ -159,19 +159,23 @@ jobs:
 
       # For the comparison below; before the smoke test, which builds them again
       - name: Upload the jars
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: jars-${{ runner.os }}
           path: 'wtf-*/target/wtf-*.jar'
           if-no-files-found: error
+          retention-days: 1
 
-      # Before the smoke test, which builds an app image into the same folder and so clears it
+      # Before the smoke test, which builds an app image into the same folder and so clears it.
+      # Kept three days, long enough to try a test build: a release carries its own copies, and
+      # the account has 500 MB of Actions storage, which one run's three installers nearly fill.
       - name: Upload the installer
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: installer-${{ runner.os }}
           path: target/installers/${{ matrix.artifact }}
           if-no-files-found: error
+          retention-days: 3
 
       # Proves the packaged runtime starts, rather than only that jpackage exited zero. The
       # unattended mode exits non-zero when it wrote no picture, so a hang is a failure here and
@@ -196,11 +200,12 @@ jobs:
 
       - name: Upload the smoke-test picture
         if: always() && runner.os != 'macOS'
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9   # v7.0.2
         with:
           name: smoke-${{ runner.os }}
           path: target/smoke.png
           if-no-files-found: ignore
+          retention-days: 3
 
   # One commit is the same jars wherever it is built (the reproducible build, and the resources
   # checked out with LF on every platform by .gitattributes). A difference is a file that took
@@ -211,7 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333   # v8.0.2
         with:
           pattern: jars-*
           path: jars
@@ -241,9 +246,9 @@ jobs:
     permissions:
       contents: write      # to create the draft release and attach the installers
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
-      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0   # v5.0.0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333   # v8.0.2
         with:
           pattern: installer-*
           path: installers
@@ -278,9 +283,43 @@ jobs:
           } >> notes.md
 
       - name: Publish
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65   # v2.6.2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64   # v3.0.3
         with:
           files: installers/*
           body_path: notes.md
           draft: true          # a human decides when it goes public
           fail_on_unmatched_files: true
+
+  # Only the builds of the newest two tags are kept: the account has 500 MB of Actions storage.
+  # Once this tag's draft exists, every release before the one it follows goes – its tag stays,
+  # a version that was – and so does every artifact of an earlier run.
+  prune:
+    name: Keep the newest two releases
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write      # to delete releases
+      actions: write       # to delete artifacts
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Delete the older releases
+        shell: bash
+        run: |
+          gh release list --limit 1000 --json tagName --jq '.[].tagName' \
+            | sort -V | head -n -2 \
+            | while read -r tag; do
+                echo "Deleting the release $tag"
+                gh release delete "$tag" --yes
+              done
+
+      - name: Delete the earlier runs' artifacts
+        shell: bash
+        run: |
+          gh api "repos/$GH_REPO/actions/artifacts" --paginate \
+              --jq ".artifacts[] | select(.workflow_run.id != $GITHUB_RUN_ID) | .id" \
+            | while read -r id; do
+                gh api -X DELETE "repos/$GH_REPO/actions/artifacts/$id"
+              done

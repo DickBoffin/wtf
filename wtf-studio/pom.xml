@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.trdlo.wtf</groupId>
         <artifactId>wtf</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>wtf-studio</artifactId>
@@ -31,7 +31,7 @@
         <!-- Each JavaFX module the application uses is named here with its classifier, and every
              other org.openjfx artifact is excluded: the platform jars and atlantafx pull in the
              classifier-less ones, empty markers that exist only to carry the platform jars, and
-             atlantafx's is JavaFX 23's. Shipped, they put a second javafx.base on the path. -->
+             atlantafx's is whichever JavaFX it was built with. Shipped, they put a second javafx.base on the path. -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>io.github.mkpaz</groupId>
             <artifactId>atlantafx-base</artifactId>
-            <version>2.1.0</version>
+            <version>3.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>
@@ -225,7 +225,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <!-- The commit this build is made from, for app.properties: two builds of one
                          commit say the same thing, which a build date never did. The whole hash,

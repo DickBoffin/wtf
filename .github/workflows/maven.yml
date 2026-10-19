@@ -1,6 +1,6 @@
 # Tests on Linux on every push (D31), plus the one job that makes the module split mean something.
 #
-# The installers are built by release.yml, on a tag or by hand. Actions are pinned by commit, with
+# It keeps nothing: the only builds kept are a release's, made by release.yml on a tag or by hand. Actions are pinned by commit, with
 # the release they are in the comment; Dependabot proposes the next one.
 name: Build
 
@@ -28,10 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad   # v6.1.0
         with:
           java-version: '25'
           distribution: 'temurin'
@@ -48,23 +48,16 @@ jobs:
       - name: The runtime's modules are the ones listed
         run: tools/package/runtime-modules.sh --check
 
-      - name: Upload jars
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4   # v5.0.0
-        with:
-          name: jars
-          path: '*/target/*.jar'
-          if-no-files-found: error
-
   engine-without-javafx:
     name: The engine builds and runs without the GUI
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09   # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
 
       - name: Set up JDK 25
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961   # v5.7.0
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad   # v6.1.0
         with:
           java-version: '25'
           distribution: 'temurin'

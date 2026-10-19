@@ -1,12 +1,13 @@
 # Change log
 
-## 0.2.0 – unreleased
+## 0.1.1 – unreleased
 
 - **The macOS disk image is named after the version WTF shows**, not the bundle number macOS
   requires inside it.
 - **A new provider's maps table shows its rows whole**: its header covered half of the first.
 - **A header value without the key token says where the key goes instead** – under Providers and
   keys, never in the provider itself.
+- **JavaFX 27**, with AtlantaFX 3 and the libraries' newest releases.
 
 ## 0.1.0 – 2026-10-12
 

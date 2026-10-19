@@ -217,7 +217,7 @@ installer lands in `target/installers`.
 
 ## Releasing
 
-The tag is the version. Between releases the pom names the next one (`0.2.0-SNAPSHOT`); the workflow
+The tag is the version. Between releases the pom names the next one (`0.1.1-SNAPSHOT`); the workflow
 stamps the tag's version into the build, so the installers and About both say `0.1.0`.
 
 1. In `CHANGELOG.md`, replace the newest section's `unreleased` by the date – `## 0.1.0 –
@@ -231,6 +231,11 @@ stamps the tag's version into the build, so the installers and About both say `0
    -DprocessAllModules=true`; add `## 0.2.0 – unreleased` above the released section; check with
    `tools/package/check-version.sh` and commit both. Without the heading, every manual run of the
    workflow fails its first job.
+
+Only the builds of the newest two tags are kept: the account has 500 MB of Actions storage. When a
+tag's draft is made, the workflow's last job deletes every release before the two newest – their
+tags stay – and every artifact of an earlier run. An artifact is kept three days at most in any
+case, and the build on a push keeps none.
 
 **A tag is never moved.** A draft that needs redoing is deleted with its tag – `gh release delete
 v0.1.0 --cleanup-tag` – and tagged again. A published release is not redone; the next version is.

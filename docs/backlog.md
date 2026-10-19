@@ -164,8 +164,7 @@ Each is *Small* unless it says otherwise.
 
 **Platforms and code**
 
-- **CI's warnings**: `actions/upload-artifact` is pinned to a Node 20 release GitHub is retiring;
-  `ubuntu-latest` moves to Ubuntu 26 on 19 October 2026; and `javac` warns of a `requires
+- **CI's warnings**: `ubuntu-latest` moves to Ubuntu 26 on 19 October 2026; and `javac` warns of a `requires
   transitive` on an automatic module (`wtf-studio/src/main/java/module-info.java:13`).
 - **A huge `Retry-After` defeats the rate limit** (`ProviderLimits:229`): `toNanos()` overflows
   past 292 years, the throw is an ordinary failure, and the next tile is asked at once. Anything

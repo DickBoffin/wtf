@@ -56,12 +56,15 @@ public final class Windows {
      * screen ({@link Prefs#restoreWindow}), and keeps where it is each time it is hidden. A
      * handler, not {@code setOnHidden}, so a window's own handler for its hiding stays its own.
      * For a dialog, whose stage JavaFX makes: {@code (Stage) dialog.getDialogPane().getScene()
-     * .getWindow()}, before the dialog is shown, so its explicit size and place win over the
-     * pane's preferred size and the centering over the owner.
+     * .getWindow()}, before the dialog is shown, so its explicit size wins over the pane's
+     * preferred size; its place is put back once it is shown, over the centering on the owner.
      */
     public static void remember(final @NotNull Stage stage, final @NotNull Prefs prefs,
                                 final @NotNull String name) {
         prefs.restoreWindow(stage, name);
+        // And again once shown: a dialog of JavaFX 27 is centered over its owner as it is shown,
+        // whatever place it was given before
+        stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> prefs.restoreWindow(stage, name));
         stage.addEventHandler(WindowEvent.WINDOW_HIDDEN, e -> prefs.saveWindow(stage, name));
     }
 
