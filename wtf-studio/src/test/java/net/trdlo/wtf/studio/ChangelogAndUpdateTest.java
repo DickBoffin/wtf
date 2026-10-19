@@ -111,12 +111,18 @@ class ChangelogAndUpdateTest {
         assertEquals("2.0", Changelog.baseVersion("2.0"));
     }
 
-    /** The bundled file has to parse, or About shows an empty tab in a release build. */
+    /**
+     * The bundled file has to parse, or About shows an empty tab in a release build. The newest
+     * released section has entries; the one above it may not yet, opened as a release goes out.
+     */
     @Test
     void theBundledChangelogParses() {
         final List<Changelog.Release> releases = Changelog.releases();
         assertFalse(releases.isEmpty(), "CHANGELOG.md should be on the classpath and parsable");
-        assertFalse(releases.getFirst().body().isBlank());
+        final Changelog.Release released = releases.stream()
+                .filter(r -> r.date() != null && !r.date().isBlank() && !r.date().equals("unreleased"))
+                .findFirst().orElseThrow();
+        assertFalse(released.body().isBlank(), released.heading());
     }
 
     // -------------------------------------------------------------------------------------------
