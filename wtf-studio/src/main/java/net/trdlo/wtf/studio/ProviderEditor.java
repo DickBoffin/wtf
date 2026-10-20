@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.*;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.trdlo.wtf.tiles.*;
@@ -19,7 +18,6 @@ import net.trdlo.wtf.tiles.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 /**
  * The form behind "add a provider" and "change this one".
@@ -214,11 +212,8 @@ public final class ProviderEditor extends StudioDialog<Provider> {
         authValue.setPromptText("{key}");
         authValue.disableProperty().bind(authKind.valueProperty().isNotEqualTo(Provider.AuthKind.HEADER));
 
-        minZoom.setEditable(true);
-        maxZoom.setEditable(true);
-        for (final Spinner<Integer> zoom : List.of(minZoom, maxZoom)) {
-            zoom.getValueFactory().setConverter(zoomConverter(zoom.getValueFactory()::getValue));
-        }
+        Forms.wholeNumbers(minZoom);
+        Forms.wholeNumbers(maxZoom);
         minZoom.setPrefWidth(80);
         maxZoom.setPrefWidth(80);
 
@@ -525,26 +520,6 @@ public final class ProviderEditor extends StudioDialog<Provider> {
         } catch (final RuntimeException ex) {
             problem.setText(EngineText.of(ex));
         }
-    }
-
-    /**
-     * A zoom level read and written in the display locale. Text that is not a whole number keeps
-     * the value the spinner had: the default converter threw on it, out of the spinner and into
-     * the uncaught-exception dialog, for a stray letter in a field.
-     */
-    static @NotNull StringConverter<Integer> zoomConverter(final @NotNull Supplier<Integer> current) {
-        return new StringConverter<>() {
-            @Override
-            public String toString(final Integer zoom) {
-                return zoom == null ? "" : I18n.integer(zoom);
-            }
-
-            @Override
-            public Integer fromString(final String text) {
-                final Double typed = I18n.parseNumber(text);
-                return typed == null || typed != Math.rint(typed) ? current.get() : typed.intValue();
-            }
-        };
     }
 
     private static @NotNull String nullToEmpty(final @Nullable String s) {

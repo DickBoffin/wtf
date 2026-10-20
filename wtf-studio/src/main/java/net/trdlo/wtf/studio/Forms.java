@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -26,6 +27,7 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeRegular;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
@@ -264,6 +266,50 @@ public final class Forms {
         });
         box.setMaxWidth(Double.MAX_VALUE);
         return box;
+    }
+
+    /**
+     * A spinner of whole numbers that takes one typed as well as stepped to.
+     * <p>
+     * JavaFX's spinner is not editable until it is told to be, and its own converter reads
+     * {@code Locale.ROOT} and throws on anything else – out of the spinner and into the
+     * uncaught-exception dialog, for a stray letter in a field. This one reads the display locale,
+     * and text that is not a whole number keeps the value the spinner had. A number past either
+     * end is brought to it by the value factory.
+     */
+    public static @NotNull Spinner<Integer> wholeNumbers(final @NotNull Spinner<Integer> spinner) {
+        spinner.setEditable(true);
+        spinner.getValueFactory().setConverter(wholeNumber(spinner.getValueFactory()::getValue));
+        // What was typed is shown back as the value it became – the same value, for text that was
+        // not a number or was past the end the spinner already stood at – rather than left in the
+        // field looking accepted
+        spinner.getEditor().setOnAction(e -> {
+            spinner.commitValue();
+            spinner.cancelEdit();
+        });
+        spinner.focusedProperty().addListener((o, was, now) -> {
+            if (!now) {
+                spinner.cancelEdit();
+            }
+        });
+        return spinner;
+    }
+
+    /** {@link #wholeNumbers}' converter, which keeps {@code current} for anything else. */
+    static @NotNull StringConverter<Integer> wholeNumber(final @NotNull Supplier<Integer> current) {
+        return new StringConverter<>() {
+            @Override
+            public String toString(final Integer value) {
+                return value == null ? "" : I18n.integer(value);
+            }
+
+            @Override
+            public Integer fromString(final String text) {
+                final Double typed = I18n.parseNumber(text);
+                return typed == null || typed != Math.rint(typed)
+                        || Math.abs(typed) > Integer.MAX_VALUE ? current.get() : typed.intValue();
+            }
+        };
     }
 
     /** A button that stays out of the tab order and never shrinks its own text to an ellipsis. */

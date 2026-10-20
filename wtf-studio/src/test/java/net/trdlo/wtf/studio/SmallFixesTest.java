@@ -68,15 +68,17 @@ class SmallFixesTest {
     }
 
     @Test
-    @DisplayName("a zoom spinner reads the display locale and keeps its value on anything else")
-    void zoomSpinnerText() {
+    @DisplayName("a spinner reads the display locale and keeps its value on anything else")
+    void spinnerText() {
         I18n.setLocale(Locale.forLanguageTag("cs-CZ"));
-        final var zoom = ProviderEditor.zoomConverter(() -> 7);
-        assertEquals(12, zoom.fromString("12"));
-        assertEquals(12, zoom.fromString(" 12 "));
-        assertEquals(7, zoom.fromString("12,5"), "not a zoom level");
-        assertEquals(7, zoom.fromString("abc"), "not a number, and no exception");
-        assertEquals(7, zoom.fromString(""));
-        assertEquals("12", zoom.toString(12));
+        final var number = Forms.wholeNumber(() -> 7);
+        assertEquals(12, number.fromString("12"));
+        assertEquals(12, number.fromString(" 12 "));
+        assertEquals(1200, number.fromString("1 200"), "grouped as Czech groups it");
+        assertEquals(7, number.fromString("12,5"), "not a whole number");
+        assertEquals(7, number.fromString("abc"), "not a number, and no exception");
+        assertEquals(7, number.fromString("99999999999"), "past what an int holds");
+        assertEquals(7, number.fromString(""));
+        assertEquals("12", number.toString(12));
     }
 }

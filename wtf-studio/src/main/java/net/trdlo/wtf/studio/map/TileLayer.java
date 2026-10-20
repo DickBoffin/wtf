@@ -105,6 +105,11 @@ final class TileLayer {
         return true;
     }
 
+    /** The zoom drawn whatever the scale is, or null; see {@link #setFixedTileZoom}. */
+    @Nullable Integer fixedTileZoom() {
+        return fixedTileZoom;
+    }
+
     /** The tile at zoom 0 every key is made from, or null while there is no source. */
     @Nullable TileKey origin() {
         return origin;
@@ -131,9 +136,8 @@ final class TileLayer {
         // 70 % over a view that is complete, and "fetching 12 tiles" waiting for a fetch that has
         // nothing to do.
         final TileRange onScreen = camera.visibleTiles(0, zoom);
-        java.util.Objects.requireNonNull(images).ensureRoomFor(range.count());
-        final int n = Mercator.tileCount(zoom);
-        final double tilePx = camera.pixelsPerUnit() / n;
+        final TileRange patch = patch();
+        java.util.Objects.requireNonNull(images).ensureRoomFor(range.count() + patch.count());
 
         // The base layer. With a region in play it is the ground outside it, so it is clipped
         // away from the inside when the inside is not drawn at all – otherwise the tiles under
@@ -146,7 +150,7 @@ final class TileLayer {
             // Counted but not painted: the view still needs those tiles to say how much of what
             // is on screen is cached, and the view's download is about the view rather than
             // about the print. The ground is paper there, as the print leaves it.
-            counts = countTiles(zoom, onScreen);
+            counts = countTiles(zoom, onScreen, patch);
             g.save();
             clipOutside(g, regionShape, w, h);
             g.setFill(PAPER);
@@ -155,10 +159,10 @@ final class TileLayer {
         } else if (split && !drawInside) {
             g.save();
             clipOutside(g, regionShape, w, h);
-            counts = drawTiles(g, zoom, n, tilePx, range, onScreen);
+            counts = drawTiles(g, zoom, range, onScreen, patch);
             g.restore();
         } else {
-            counts = drawTiles(g, zoom, n, tilePx, range, onScreen);
+            counts = drawTiles(g, zoom, range, onScreen, patch);
         }
 
         // The inside, over it, clipped to its own shape and filtered its own way. Only the tiles
@@ -169,7 +173,7 @@ final class TileLayer {
             region.save();
             clipTo(region, regionShape);
             if (drawInside) {
-                drawTiles(region, zoom, n, tilePx, range, onScreen);
+                drawTiles(region, zoom, range, onScreen, patch);
             } else {
                 region.setFill(PAPER);
                 region.fillRect(0, 0, w, h);
@@ -189,6 +193,16 @@ final class TileLayer {
      *         pass's answer is kept, because the same tiles drawn twice are not twice as many
      */
     /** The same walk without the drawing, for a half of the map that is not printed. */
+    private int @NotNull [] countTiles(final int zoom, final @NotNull TileRange onScreen,
+                                       final @NotNull TileRange patch) {
+        final int[] ground = countTiles(zoom, onScreen);
+        if (patch.isEmpty()) {
+            return ground;
+        }
+        final int[] fine = countTiles(java.util.Objects.requireNonNull(fixedTileZoom), patch);
+        return new int[]{ground[0] + fine[0], ground[1] + fine[1]};
+    }
+
     private int @NotNull [] countTiles(final int zoom, final @NotNull TileRange onScreen) {
         final TileImageCache images = java.util.Objects.requireNonNull(this.images);
         final TileKey origin = java.util.Objects.requireNonNull(this.origin);
@@ -204,9 +218,25 @@ final class TileLayer {
         return new int[]{visible, missing};
     }
 
-    private int @NotNull [] drawTiles(final @NotNull GraphicsContext g, final int zoom, final int n,
-                                      final double tilePx, final @NotNull TileRange range,
-                                      final @NotNull TileRange onScreen) {
+    /**
+     * The tiles of the drawn zoom, and the patch of the fixed one over them; counted together,
+     * since both are on screen and both are fetched.
+     */
+    private int @NotNull [] drawTiles(final @NotNull GraphicsContext g, final int zoom,
+                                      final @NotNull TileRange range, final @NotNull TileRange onScreen,
+                                      final @NotNull TileRange patch) {
+        final int[] ground = drawTiles(g, zoom, range, onScreen);
+        if (patch.isEmpty()) {
+            return ground;
+        }
+        final int[] fine = drawTiles(g, java.util.Objects.requireNonNull(fixedTileZoom), patch, patch);
+        return new int[]{ground[0] + fine[0], ground[1] + fine[1]};
+    }
+
+    private int @NotNull [] drawTiles(final @NotNull GraphicsContext g, final int zoom,
+                                      final @NotNull TileRange range, final @NotNull TileRange onScreen) {
+        final int n = Mercator.tileCount(zoom);
+        final double tilePx = camera.pixelsPerUnit() / n;
         final TileImageCache images = java.util.Objects.requireNonNull(this.images);
         final TileKey origin = java.util.Objects.requireNonNull(this.origin);
         int visible = 0, missing = 0;
@@ -396,22 +426,51 @@ final class TileLayer {
         for (final int[] xy : camera.visibleTiles(0, zoom)) {
             keys.add(origin.at(zoom, xy[0], xy[1]));
         }
+        final TileRange patch = patch();
+        for (final int[] xy : patch) {
+            keys.add(origin.at(java.util.Objects.requireNonNull(fixedTileZoom), xy[0], xy[1]));
+        }
         return keys;
     }
 
     /**
-     * The zoom the tiles are drawn at: the fixed one if there is one and it is not absurd for this
-     * view, else the one the scale implies.
+     * The zoom the view is drawn at: the fixed one if there is one and the whole view of it is not
+     * absurd, else the one the scale implies – with the fixed zoom then drawn over the
+     * {@link #patch} of it that is not.
      * <p>
-     * The fixed zoom is a request, not an order. A zoom far finer than the scale means tiles
-     * smaller than a pixel and a range of millions of them, and painting every one hangs the
-     * window with nothing to show for it but a busy FX thread. One place decides, so the tiles
-     * that are drawn, counted and fetched are always the same tiles.
+     * A zoom far finer than the scale means tiles smaller than a pixel and a range of millions of
+     * them, and painting every one hangs the window with nothing to show for it but a busy FX
+     * thread. One place decides, so the tiles that are drawn, counted and fetched are always the
+     * same tiles.
      */
     int drawZoom() {
         if (fixedTileZoom != null && camera.visibleTiles(1, fixedTileZoom).count() <= MAX_TILES_PER_FRAME) {
             return fixedTileZoom;
         }
         return camera.tileZoom();
+    }
+
+    /**
+     * The tiles of the fixed zoom drawn in the middle of a view too big to draw all of it, or an
+     * empty range when there is no fixed zoom or the whole view is drawn at it.
+     * <p>
+     * The 1:1 preview is the case: a country on two sheets at zoom 15 is a quarter of a million
+     * tiles on screen, and drawing the scale's zoom instead showed place names a reader could read
+     * where the print has them a tenth of a millimeter tall. A square of as many tiles as a frame
+     * may hold, about the middle of the view and within it, shows the print's own detail where
+     * the eye goes.
+     */
+    @NotNull TileRange patch() {
+        final Integer fixed = fixedTileZoom;
+        if (fixed == null || drawZoom() == fixed) {
+            return TileRange.EMPTY;
+        }
+        final int n = Mercator.tileCount(fixed);
+        final int side = (int) Math.sqrt(MAX_TILES_PER_FRAME);
+        final int cx = (int) Math.floor(camera.toUnitX(camera.viewWidth() / 2) * n);
+        final int cy = (int) Math.floor(camera.toUnitY(camera.viewHeight() / 2) * n);
+        final int minX = cx - side / 2, minY = cy - side / 2;
+        return new TileRange(minX, minY, minX + side - 1, minY + side - 1)
+                .intersect(camera.visibleTiles(0, fixed));
     }
 }

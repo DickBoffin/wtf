@@ -180,8 +180,8 @@ public final class MediumPanel extends StepPanel {
 
         // Any count the engine takes, which is any: a file of 120 sheets across opens with 120. A
         // count below one prints one sheet, and is shown as one.
-        final Spinner<Integer> count = new Spinner<>(1, Integer.MAX_VALUE,
-                Math.max(1, model.sheetCountProperty().get()));
+        final Spinner<Integer> count = Forms.wholeNumbers(new Spinner<>(1, Integer.MAX_VALUE,
+                Math.max(1, model.sheetCountProperty().get())));
         // Four digits and the arrows: the axis beside it needs the rest of the row, and "na výšku"
         // is the longer of its words
         count.setPrefWidth(84);

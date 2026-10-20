@@ -216,8 +216,8 @@ public final class SettingsDialog extends StudioDialog<Void> {
     }
 
     private @NotNull Region buildDownload() {
-        final Spinner<Integer> threads = new Spinner<>(1, 16,
-                prefs.get(Prefs.DOWNLOAD_THREADS));
+        final Spinner<Integer> threads = Forms.wholeNumbers(new Spinner<>(1, 16,
+                prefs.get(Prefs.DOWNLOAD_THREADS)));
         threads.valueProperty().addListener((o, a, b) -> prefs.put(Prefs.DOWNLOAD_THREADS, b));
 
         return new VBox(8,

@@ -255,4 +255,47 @@ class MediumPanelTest {
             close(stage);
         }
     }
+
+    @Test
+    @DisplayName("the sheet count takes a number typed into it, in the display locale")
+    @SuppressWarnings("unchecked")
+    void sheetCountIsTyped() throws Exception {
+        final java.util.Locale was = net.trdlo.wtf.studio.I18n.locale();
+        net.trdlo.wtf.studio.I18n.setLocale(java.util.Locale.forLanguageTag("cs-CZ"));
+        final ProjectModel m = new ProjectModel();
+        final Provider nowhere = Headless.nowhere();
+        m.startOver(() -> {
+            m.providerProperty().set(nowhere);
+            m.themeProperty().set(nowhere.themes().getFirst());
+            m.areaSourceProperty().set(ProjectModel.AreaSource.CUSTOM);
+            m.customProperty().set(Shapes.rectangle(BISCAY));
+            m.mediumKindProperty().set(ProjectModel.MediumKind.SHEET);
+            m.sizeByProperty().set(ProjectModel.SizeBy.SHEETS);
+            m.sheetCountProperty().set(2);
+        });
+        Stage stage = null;
+        try {
+            final MediumPanel panel = new MediumPanel(m);
+            stage = onFx(() -> show(panel));
+            final Spinner<Integer> count = onFx(() -> (Spinner<Integer>) find(panel.node(), Spinner.class,
+                    s -> true).orElseThrow());
+            assertTrue(onFx(count::isEditable), "a spinner nobody can type into");
+            onFx(() -> {
+                count.getEditor().setText("1 200");
+                count.getEditor().fireEvent(new javafx.event.ActionEvent());   // Enter
+                return null;
+            });
+            assertEquals(1200, onFx(() -> m.sheetCountProperty().get()), "the typed count is the project's");
+            onFx(() -> {
+                count.getEditor().setText("tři");
+                count.getEditor().fireEvent(new javafx.event.ActionEvent());   // Enter
+                return null;
+            });
+            assertEquals(1200, onFx(() -> m.sheetCountProperty().get()), "and a word changes nothing");
+            assertEquals("1 200", onFx(() -> count.getEditor().getText()), "shown again as it was");
+        } finally {
+            close(stage);
+            net.trdlo.wtf.studio.I18n.setLocale(was);
+        }
+    }
 }

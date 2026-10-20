@@ -2,6 +2,7 @@ package net.trdlo.wtf.studio.map;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.*;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
@@ -269,6 +270,25 @@ public final class TileCanvas extends Region {
         if (layer.setFixedTileZoom(zoom)) {
             requestPaint();
         }
+    }
+
+    /**
+     * Where on the canvas the fixed zoom is drawn when the view is too big to draw all of it at
+     * that zoom, or null when it is drawn everywhere or there is no fixed zoom. Elsewhere the
+     * tiles are the scale's own zoom.
+     */
+    public @Nullable Rectangle2D fixedZoomPatch() {
+        final TileRange patch = layer.patch();
+        final Integer zoom = layer.fixedTileZoom();
+        if (patch.isEmpty() || zoom == null) {
+            return null;
+        }
+        final int n = Mercator.tileCount(zoom);
+        final double x0 = camera.toScreenX((double) patch.minX() / n);
+        final double y0 = camera.toScreenY((double) patch.minY() / n);
+        final double x1 = camera.toScreenX((double) (patch.maxX() + 1) / n);
+        final double y1 = camera.toScreenY((double) (patch.maxY() + 1) / n);
+        return new Rectangle2D(x0, y0, x1 - x0, y1 - y0);
     }
 
     public void setZoomLocked(final boolean locked) {

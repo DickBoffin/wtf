@@ -57,6 +57,7 @@ public final class ScalePreview {
     private static final Color RULER_LINE = Color.web("#f8f9fa", 0.85);
     private static final Color RULER_TEXT = Color.web("#f8f9fa");
     private static final Color CARD_LINE = Color.web("#ffd43b");
+    private static final Color PATCH_VEIL = Color.web("#11141a", 0.55);
 
     private final StepContext ctx;
     private final ProjectModel model;
@@ -150,6 +151,7 @@ public final class ScalePreview {
         canvas.addOverlay(paper);
         // The line the print draws along the subject, under the ruler and the card
         canvas.addOverlay(new PrintedLine(model, () -> screenDpi / 25.4));
+        canvas.addOverlay(this::drawPatch);
         canvas.addOverlay(this::drawRuler);
         // The treatments, as the map shows them: both regions, each its own way, and one that is
         // not printed white. This window exists to answer "what will that look like on paper",
@@ -298,10 +300,38 @@ public final class ScalePreview {
         canvas.requestPaint();
 
         final int zoom = model.zoomProperty().get();
-        caption.setText(I18n.format("preview.caption",
-                I18n.number(print.dpi(zoom, scale), 0), DetailPanel.zoomText(zoom, scale),
-                net.trdlo.wtf.studio.Units.current().length(print.labelHeightMm(zoom), 2),
-                net.trdlo.wtf.studio.Units.current().length(canvas.getWidth() / pxPerMm, 0)));
+        final net.trdlo.wtf.studio.Units units = net.trdlo.wtf.studio.Units.current();
+        final String dpi = I18n.number(print.dpi(zoom, scale), 0);
+        final String zoomText = DetailPanel.zoomText(zoom, scale);
+        final String labels = units.length(print.labelHeightMm(zoom), 2);
+        final String shown = units.length(canvas.getWidth() / pxPerMm, 0);
+        final javafx.geometry.Rectangle2D patch = canvas.fixedZoomPatch();
+        caption.setText(patch == null
+                ? I18n.format("preview.caption", dpi, zoomText, labels, shown)
+                : I18n.format("preview.caption.patch", dpi, zoomText, labels, shown,
+                        units.length(patch.getWidth() / pxPerMm, 0)));
+    }
+
+    /**
+     * The part drawn at the print's zoom, when that is not all of it: the rest veiled, so the
+     * coarser tiles around it are not taken for the print – they are legible where the print is
+     * not.
+     */
+    private void drawPatch(final @NotNull GraphicsContext g, final @NotNull Camera camera,
+                           final double width, final double height) {
+        final javafx.geometry.Rectangle2D patch = canvas.fixedZoomPatch();
+        if (patch == null) {
+            return;
+        }
+        g.setFill(PATCH_VEIL);
+        g.fillRect(0, 0, width, patch.getMinY());
+        g.fillRect(0, patch.getMaxY(), width, height - patch.getMaxY());
+        g.fillRect(0, patch.getMinY(), patch.getMinX(), patch.getHeight());
+        g.fillRect(patch.getMaxX(), patch.getMinY(), width - patch.getMaxX(), patch.getHeight());
+        g.setStroke(RULER_LINE);
+        g.setLineWidth(1.5);
+        g.strokeRect(Math.floor(patch.getMinX()) + 0.5, Math.floor(patch.getMinY()) + 0.5,
+                Math.round(patch.getWidth()), Math.round(patch.getHeight()));
     }
 
 
