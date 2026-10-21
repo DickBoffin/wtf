@@ -9,8 +9,9 @@ module net.trdlo.wtf.studio {
 
     requires transitive net.trdlo.wtf.compose;
     // The window edits geometry directly – the shape tools, the overlays and the
-    // project file all speak JTS. The engine modules still owe JavaFX nothing.
-    requires transitive org.locationtech.jts;
+    // project file all speak JTS. The engine modules still owe JavaFX nothing. Not transitive:
+    // no module reads this one, and JTS is an automatic module, which javac warns about passing on.
+    requires org.locationtech.jts;
 
     requires javafx.base;
     requires javafx.graphics;
