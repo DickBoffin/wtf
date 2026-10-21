@@ -1,5 +1,7 @@
 # Change log
 
+## 0.2.0 – unreleased
+
 ## 0.1.2 – 2026-10-21
 
 - **The 1:1 preview shows the zoom you chose** however much paper is in the window. Where that
