@@ -1,6 +1,14 @@
 # Change log
 
-## 0.2.0 – unreleased
+## 0.1.2 – 2026-10-21
+
+- **The 1:1 preview shows the zoom you chose** however much paper is in the window. Where that
+  zoom is too many tiles to draw over all of it – a country on two sheets at zoom 15 – it is drawn
+  over a square in the middle, with the coarser map around it dimmed and the caption saying so.
+  Until now the whole window quietly showed a coarser zoom, with legible names the print does not
+  have.
+- **The sheet count and the download threads take a typed number**, as the provider editor's
+  zoom levels already did, in the language WTF speaks: "1 200" in Czech.
 
 ## 0.1.1 – 2026-10-19
 
