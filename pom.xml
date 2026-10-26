@@ -51,7 +51,7 @@
              application says about its build is the commit it was made from (app.properties). -->
         <project.build.outputTimestamp>2026-09-25T00:00:00Z</project.build.outputTimestamp>
 
-        <javafx.version>27</javafx.version>
+        <javafx.version>27.0.1</javafx.version>
         <ikonli.version>12.4.0</ikonli.version>
         <!-- 2.22.2 or newer: 2.20.0 dragged in jackson-core with WS-2026-0003 (the async parser
              ignores StreamReadConstraints.maxNumberLength, fixed in 2.21.1) and CVE-2026-68498
